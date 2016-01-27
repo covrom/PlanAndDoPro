@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  ~ Copyright (c) Roman Tsovanyan
+  -->
+
+<resources>
+    <color name="colorPrimary">#3F51B5</color>
+    <color name="colorPrimaryDark">#303F9F</color>
+    <color name="colorAccent">#FF4081</color>
+    <color name="colorSelectDay">#7F3F51B5</color>
+    <color name="foreground_full">#fff</color>
+    <color name="foreground_semi">#4fff</color>
+    <color name="foreground_semitext">#9e9e9e</color>
+    <color name="foreground_text">#e0e0e0</color>
+    <color name="foreground_textday">#7fff</color>
+    <color name="foreground_today">#fff</color>
+    <color name="track_plan">#CF64B5F6</color>
+    <color name="track_plan_low">#CF2196F3</color>
+    <color name="track_skip">#CF90A4AE</color>
+    <color name="track_skip_low">#CF607D8B</color>
+    <color name="track_due">#CFFFC107</color>
+    <color name="track_due_low">#CFFFA000</color>
+    <color name="track_due_chain">#DFFFC107</color>
+    <color name="track_cancel">#CFFF8A80</color>
+    <color name="track_cancel_low">#CFFF5252</color>
+    <color name="notifycolor">#FFB41E</color>
+
+</resources>

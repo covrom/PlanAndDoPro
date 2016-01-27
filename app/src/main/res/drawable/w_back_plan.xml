@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  ~ Copyright (c) Roman Tsovanyan
+  -->
+
+<shape xmlns:android="http://schemas.android.com/apk/res/android" android:shape="rectangle" >
+    <gradient
+        android:startColor="@color/track_plan_low"
+        android:endColor="@color/track_plan"
+        android:angle="90"></gradient>
+    <stroke android:width="1dip" android:color="#0000"/>
+    <corners android:radius="4dp" />
+</shape>

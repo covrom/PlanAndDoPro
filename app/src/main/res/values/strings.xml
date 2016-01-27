@@ -1,0 +1,32 @@
+<!--
+  ~ Copyright (c) Roman Tsovanyan
+  -->
+
+<resources>
+    <string name="app_name"><![CDATA[Plan&Do Pro]]></string>
+    <string name="action_settings">Settings</string>
+    <string name="habbitname">What to do</string>
+    <string name="habbitdesc">Motivation</string>
+    <string name="buttonok">OK</string>
+    <string name="delete_record">Delete</string>
+    <string name="completenow">Complete now!</string>
+    <string name="additem">Add</string>
+    <string name="buttonSave">Save</string>
+    <string name="edit_menurecord">Edit</string>
+    <string name="track_nothing">Nothing</string>
+    <string name="track_plan">Plan</string>
+    <string name="track_due">Complete</string>
+    <string name="track_cancel">Not complete</string>
+    <string name="widget_name"><![CDATA[Plan&Do Pro]]></string>
+    <string name="previous_month">Back</string>
+    <string name="next_month">Forward</string>
+    <string name="to_planned">Plan</string>
+    <string name="to_cancel">Not complete</string>
+    <string name="to_due">Complete</string>
+    <string name="to_clean">Nothing</string>
+    <string name="notifyhourname">Hour to notify</string>
+    <string name="clockIconSym">&#xf017; </string>
+    <string name="habicon">Icon</string>
+
+
+</resources>
