@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  ~ Copyright (c) Roman Tsovanyan
+  -->
+
+<resources>
+    <string name="app_name">Планируй и выполняй ПРОФ</string>
+    <string name="action_settings">Настройки</string>
+    <string name="additem">Добавить</string>
+    <string name="buttonSave">Сохранить</string>
+    <string name="buttonok">OK</string>
+    <string name="completenow">Завершено!</string>
+    <string name="delete_record">Удалить</string>
+    <string name="edit_menurecord">Редактировать</string>
+    <string name="habbitdesc">Мотивация</string>
+    <string name="habbitname">Действие</string>
+    <string name="next_month">Вперед</string>
+    <string name="previous_month">Назад</string>
+    <string name="to_cancel">Не выполнил</string>
+    <string name="to_clean">Очистил</string>
+    <string name="to_due">Выполнил</string>
+    <string name="to_planned">Запланировал</string>
+    <string name="track_cancel">Не выполнено</string>
+    <string name="track_due">Выполнено</string>
+    <string name="track_nothing">Очистить</string>
+    <string name="track_plan">План</string>
+    <string name="widget_name">Планируй и выполняй ПРОФ</string>
+    <string name="notifyhourname">Час напоминаний</string>
+    <string name="habicon">Символ</string>
+</resources>

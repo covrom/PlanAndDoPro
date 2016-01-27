@@ -1,0 +1,129 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  ~ Copyright (c) Roman Tsovanyan
+  -->
+
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical" android:layout_width="match_parent"
+    android:layout_height="wrap_content">
+
+        <LinearLayout android:orientation="horizontal" android:layout_height="wrap_content" android:layout_width="match_parent"
+            android:layout_marginTop="4dp">
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textAppearance="?android:attr/textAppearanceMedium"
+                android:text="Medium Text"
+                android:id="@+id/widgetEventName"
+                android:fontFamily="sans-serif-condensed"
+                android:gravity="center"
+                android:layout_weight="10"
+                android:textColor="@color/foreground_text" />
+
+            <ImageView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:id="@+id/widgetIcon"
+                android:layout_gravity="right"
+                android:layout_weight="1" />
+        </LinearLayout>
+    <LinearLayout
+        android:id="@+id/calendar"
+        android:orientation="vertical"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_weight="1">
+
+        <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+            android:id="@+id/row_container"
+            android:layout_width="match_parent"
+            android:layout_height="30dp"
+            android:layout_weight="1"
+            android:orientation="horizontal"
+            android:layout_marginBottom="9dp"
+            android:layout_marginTop="5dp">
+
+            <TextView xmlns:android="http://schemas.android.com/apk/res/android"
+                android:id="@+id/tr1"
+                android:layout_width = "0dp"
+                android:layout_weight = "1"
+                android:layout_height = "match_parent"
+                android:gravity = "center"
+                android:fontFamily = "sans-serif-condensed"
+                android:textColor = "@color/foreground_semitext"
+                android:textSize="18sp"
+                android:text="">
+            </TextView>
+            <TextView xmlns:android="http://schemas.android.com/apk/res/android"
+                android:id="@+id/tr2"
+                android:layout_width = "0dp"
+                android:layout_weight = "1"
+                android:layout_height = "match_parent"
+                android:gravity = "center"
+                android:fontFamily = "sans-serif-condensed"
+                android:textColor = "@color/foreground_semitext"
+                android:textSize="18sp"
+                android:text="">
+            </TextView>
+            <TextView xmlns:android="http://schemas.android.com/apk/res/android"
+                android:id="@+id/tr3"
+                android:layout_width = "0dp"
+                android:layout_weight = "1"
+                android:layout_height = "match_parent"
+                android:gravity = "center"
+                android:fontFamily = "sans-serif-condensed"
+                android:textColor = "@color/foreground_semitext"
+                android:textSize="18sp"
+                android:text="">
+            </TextView>
+            <TextView xmlns:android="http://schemas.android.com/apk/res/android"
+                android:id="@+id/tr4"
+                android:layout_width = "0dp"
+                android:layout_weight = "1"
+                android:layout_height = "match_parent"
+                android:gravity = "center"
+                android:fontFamily = "sans-serif-condensed"
+                android:textColor = "@color/foreground_semitext"
+                android:textSize="18sp"
+                android:text="">
+            </TextView>
+            <TextView xmlns:android="http://schemas.android.com/apk/res/android"
+                android:id="@+id/tr5"
+                android:layout_width = "0dp"
+                android:layout_weight = "1"
+                android:layout_height = "match_parent"
+                android:gravity = "center"
+                android:fontFamily = "sans-serif-condensed"
+                android:textColor = "@color/foreground_semitext"
+                android:textSize="18sp"
+                android:text="">
+            </TextView>
+            <TextView xmlns:android="http://schemas.android.com/apk/res/android"
+                android:id="@+id/tr6"
+                android:layout_width = "0dp"
+                android:layout_weight = "1"
+                android:layout_height = "match_parent"
+                android:gravity = "center"
+                android:fontFamily = "sans-serif-condensed"
+                android:textColor = "@color/foreground_semitext"
+                android:textSize="18sp"
+                android:text="">
+            </TextView>
+            <TextView xmlns:android="http://schemas.android.com/apk/res/android"
+                android:id="@+id/tr7"
+                android:layout_width = "0dp"
+                android:layout_weight = "1"
+                android:layout_height = "match_parent"
+                android:gravity = "center"
+                android:fontFamily = "sans-serif-condensed"
+                android:textColor = "@color/foreground_semitext"
+                android:textSize="18sp"
+                android:text="">
+            </TextView>
+
+
+        </LinearLayout>
+
+    </LinearLayout>
+
+</LinearLayout><!-- From: file:/D:/Android/proj/PlanAndDoPro/app/src/main/res/layout/widget_item.xml -->
