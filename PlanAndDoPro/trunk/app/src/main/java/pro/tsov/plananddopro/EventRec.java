@@ -27,4 +27,10 @@ public class EventRec {
         return values;
     }
 
+    public String getTabbedText(long eventId){
+        return "Event ID\tName\tDescribe\nNotifyHour\n"+
+                String.valueOf(eventId)+"\t"+name+"\t"+describe+"\t"+notifyhour+"\n";
+
+    }
+
 }

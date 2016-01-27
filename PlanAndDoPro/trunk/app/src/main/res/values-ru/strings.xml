@@ -27,4 +27,6 @@
     <string name="widget_name">Планируй и выполняй ПРОФ</string>
     <string name="notifyhourname">Час напоминаний</string>
     <string name="habicon">Символ</string>
+    <string name="clockIconSym">&#xf017;</string>
+    <string name="send">Отправить</string>
 </resources>
