@@ -27,6 +27,7 @@
     <string name="notifyhourname">Hour to notify</string>
     <string name="clockIconSym">&#xf017; </string>
     <string name="habicon">Icon</string>
+    <string name="send">Send</string>
 
 
 </resources>

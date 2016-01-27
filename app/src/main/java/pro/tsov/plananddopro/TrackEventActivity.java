@@ -115,6 +115,14 @@ public class TrackEventActivity extends AppCompatActivity implements OnDateSelec
             i.putExtra(EditEventActivity.ACTION_EXTRA_EVENTID, currentRowId);//новый
             startActivityForResult(i, 2);
         }
+        if (id == R.id.track_sendtabbed) {
+            TrackRec tr = new TrackRec(currentRowId);
+            Intent sendIntent = new Intent();
+            sendIntent.setAction(Intent.ACTION_SEND);
+            sendIntent.putExtra(Intent.EXTRA_TEXT, tr.getTabbedText(PlanDoDBOpenHelper.getInstance(this)));
+            sendIntent.setType("text/plain");
+            startActivity(sendIntent);
+        }
         return super.onOptionsItemSelected(item);
     }
 

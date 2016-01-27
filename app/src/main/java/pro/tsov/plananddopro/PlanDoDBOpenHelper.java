@@ -381,7 +381,7 @@ public class PlanDoDBOpenHelper extends SQLiteOpenHelper {
 
             String SELECT_QUERY =
                     "SELECT eventDay, eventType, comment  FROM tracks WHERE eventId="
-                            + String.valueOf(rec.eventId);
+                            + String.valueOf(rec.eventId)+" ORDER BY DATE(eventDay) ASC";
 
             Cursor cursor = db.rawQuery(SELECT_QUERY, null);
             if (cursor.moveToFirst()) {
