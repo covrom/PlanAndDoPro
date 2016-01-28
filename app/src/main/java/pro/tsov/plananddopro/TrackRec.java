@@ -26,7 +26,7 @@ public class TrackRec {
     public String getTabbedText(PlanDoDBOpenHelper helper){
         EventRec ev = helper.getEventData(eventId);
         helper.readTrackToRec(this);
-        String Result = "Plan and Do Pro (event track)\n\rhttps://play.google.com/store/apps/details?id=pro.tsov.plananddopro"+ev.getTabbedText(eventId)+"\n\r\n\r"+"Date\tStatus\tComment\n\r";
+        String Result = "Plan and Do Pro (event track)\n\rhttps://play.google.com/store/apps/details?id=pro.tsov.plananddopro\n\r"+ev.getTabbedText(eventId)+"\n\r\n\r"+"Date\tStatus\tComment\n\r";
         List keys = new ArrayList(trackdates.keySet());
         Collections.sort(keys);
         DateFormat iso8601Format = new SimpleDateFormat("yyyy-MM-dd");
