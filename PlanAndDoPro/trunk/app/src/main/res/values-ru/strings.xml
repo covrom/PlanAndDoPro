@@ -29,4 +29,6 @@
     <string name="habicon">Символ</string>
     <string name="clockIconSym">&#xf017;</string>
     <string name="send">Отправить</string>
+    <string name="mainListNoData">Здесь пока пусто</string>
+    <string name="addFirstEvent">Добавить первую задачу</string>
 </resources>

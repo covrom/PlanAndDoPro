@@ -13,6 +13,30 @@
     android:paddingTop="@dimen/activity_vertical_margin"
     tools:context="pro.tsov.plananddopro.MainActivity">
 
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/emptylist"
+        android:visibility="invisible"
+        android:orientation="vertical"
+        android:layout_centerVertical="true">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:text="@string/mainListNoData"
+            android:layout_gravity="center"
+            android:paddingBottom="20dp" />
+        <Button
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:text="@string/addFirstEvent"
+            android:id="@+id/buttonAdd"/>
+
+    </LinearLayout>
+
     <ListView
         android:layout_width="match_parent"
         android:layout_height="match_parent"
