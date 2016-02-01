@@ -28,6 +28,8 @@
     <string name="clockIconSym">&#xf017; </string>
     <string name="habicon">Icon</string>
     <string name="send">Send</string>
+    <string name="mainListNoData">Empty list</string>
+    <string name="addFirstEvent">Add first event</string>
 
 
 </resources>

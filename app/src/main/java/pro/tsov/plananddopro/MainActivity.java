@@ -17,6 +17,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
+import android.widget.Button;
 import android.widget.ListView;
 import android.widget.SimpleCursorAdapter;
 
@@ -47,6 +48,17 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
 
 //        lvData = new ListView(this);
         lvData.setAdapter(scAdapter);
+
+        View emptyV = findViewById(R.id.emptylist);
+        Button btnV = (Button) emptyV.findViewById(R.id.buttonAdd);
+        btnV.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                addNewEvent();
+            }
+        });
+        lvData.setEmptyView(emptyV);
+
 
         // добавляем контекстное меню к списку
         registerForContextMenu(lvData);
@@ -85,6 +97,13 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
         return super.onCreateOptionsMenu(menu);
     }
 
+    public void addNewEvent(){
+        Intent i = new Intent(MainActivity.this, EditEventActivity.class);
+        long newrec = -1;
+        i.putExtra(EditEventActivity.ACTION_EXTRA_EVENTID, newrec);//новый
+        startActivityForResult(i, 1);
+    }
+
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         // Handle action bar item clicks here. The action bar will
@@ -97,10 +116,7 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
 //            return true;
 //        } else
         if (id == R.id.action_add){
-            Intent i = new Intent(MainActivity.this,EditEventActivity.class);
-            long newrec = -1;
-            i.putExtra(EditEventActivity.ACTION_EXTRA_EVENTID, newrec);//новый
-            startActivityForResult(i,1);
+            addNewEvent();
         }
 
         return super.onOptionsItemSelected(item);
