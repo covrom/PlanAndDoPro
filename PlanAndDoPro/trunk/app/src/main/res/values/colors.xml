@@ -13,6 +13,7 @@
     <color name="foreground_semitext">#9e9e9e</color>
     <color name="foreground_text">#e0e0e0</color>
     <color name="foreground_textday">#7fff</color>
+    <color name="foreground_textday_black">#000</color>
     <color name="foreground_today">#fff</color>
     <color name="track_plan">#CF64B5F6</color>
     <color name="track_plan_low">#CF2196F3</color>
