@@ -107,24 +107,13 @@ public class TrackTextView extends TextView {
                 }
             }
             else if (eventType==2){
-
-                if (leftConnected && rightConnected)
-                    drawable = ContextCompat.getDrawable(context, R.drawable.w_back_due).mutate();
-                else if (leftConnected && !rightConnected)
-                    drawable = ContextCompat.getDrawable(context, R.drawable.w_back_due_noright).mutate();
-                else if (!leftConnected && rightConnected)
-                    drawable = ContextCompat.getDrawable(context, R.drawable.w_back_due_noleft).mutate();
-                else if (!leftConnected && !rightConnected)
-                    drawable = ContextCompat.getDrawable(context, R.drawable.w_back_due_noall).mutate();
+                drawable = ContextCompat.getDrawable(context, R.drawable.w_back_do).mutate();
             }
             else if (eventType==3){
                 drawable = ContextCompat.getDrawable(context, R.drawable.w_back_cancel).mutate();
             }
             else{
-                if(leftConnected && rightConnected)
-                    drawable = ContextCompat.getDrawable(context, R.drawable.w_back_empty_chain).mutate();
-                else
-                    drawable = ContextCompat.getDrawable(context, R.drawable.w_back_empty).mutate();
+                drawable = ContextCompat.getDrawable(context, R.drawable.w_back_empty).mutate();
             }
             setBackground(drawable);
 
@@ -145,10 +134,50 @@ public class TrackTextView extends TextView {
         super.onDraw(canvas);
         if (hasComment) {
             Paint paint = new Paint();
+            paint.setStrokeWidth(TrackFactory.convertDiptoPix(context,2));
             paint.setColor(ContextCompat.getColor(context, R.color.commentpoint));
             int off = TrackFactory.convertDiptoPix(context,8);
-            int rad = TrackFactory.convertDiptoPix(context, 4);
-            canvas.drawCircle(getWidth()-off,off,rad, paint);
+            int rad = TrackFactory.convertDiptoPix(context, 3);
+            canvas.drawCircle(getWidth()-(int)(off*1.6),off,rad, paint);
+
+            if (eventType==2){
+                off = TrackFactory.convertDiptoPix(context,8);
+                rad = TrackFactory.convertDiptoPix(context, 3);
+                paint.setColor(ContextCompat.getColor(context, R.color.foreground_full));
+                canvas.drawCircle(getWidth()-off,getHeight()/2,rad, paint);
+                canvas.drawCircle(off, getHeight() / 2, rad, paint);
+
+                paint.setColor(ContextCompat.getColor(context, R.color.track_due_chain));
+                canvas.drawCircle(getWidth() - off, getHeight() / 2, (int)(rad * 0.8), paint);
+                canvas.drawCircle(off,getHeight()/2,(int)(rad*0.8), paint);
+
+                if(leftConnected){
+                    paint.setColor(ContextCompat.getColor(context, R.color.foreground_full));
+                    paint.setStrokeWidth(TrackFactory.convertDiptoPix(context, 2));
+                    canvas.drawLine(0, getHeight() / 2, off, getHeight() / 2, paint);
+                    paint.setColor(ContextCompat.getColor(context, R.color.track_due_chain));
+                    paint.setStrokeWidth(TrackFactory.convertDiptoPix(context, 1));
+                    canvas.drawLine(0, getHeight() / 2, off, getHeight() / 2, paint);
+                }
+                if(rightConnected){
+                    paint.setColor(ContextCompat.getColor(context, R.color.foreground_full));
+                    paint.setStrokeWidth(TrackFactory.convertDiptoPix(context, 2));
+                    canvas.drawLine(getWidth() - off, getHeight() / 2, getWidth() - 1, getHeight() / 2, paint);
+                    paint.setColor(ContextCompat.getColor(context, R.color.track_due_chain));
+                    paint.setStrokeWidth(TrackFactory.convertDiptoPix(context, 1));
+                    canvas.drawLine(getWidth() - off, getHeight() / 2, getWidth() - 1, getHeight() / 2, paint);
+                }
+
+            }else{
+                if(leftConnected&&rightConnected){
+                    paint.setColor(ContextCompat.getColor(context, R.color.foreground_full));
+                    paint.setStrokeWidth(TrackFactory.convertDiptoPix(context, 2));
+                    canvas.drawLine(0, getHeight() / 2, getWidth() - 1, getHeight() / 2, paint);
+                    paint.setColor(ContextCompat.getColor(context, R.color.track_due_chain));
+                    paint.setStrokeWidth(TrackFactory.convertDiptoPix(context, 1));
+                    canvas.drawLine(0, getHeight() / 2, getWidth() - 1, getHeight() / 2, paint);
+                }
+            }
         }
     }
 }
