@@ -36,14 +36,11 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.Locale;
 
-public class TrackEventActivity extends AppCompatActivity implements OnDateSelectedListener, DayViewDecorator, View.OnClickListener {
+public class TrackEventActivity extends AppCompatActivity implements View.OnClickListener {
 
     public long currentRowId;
     public Date currentDay;
     private TrackRec trackrec;
-    private MaterialCalendarView calendar;
-    private EventDecorator decor_plan,decor_skip,decor_due,decor_cancel;
-
     private static final String PREF_MONTH = "pro.tsov.plananddopro.trackactivitymonth";
     private static final String PREF_YEAR = "pro.tsov.plananddopro.trackactivityyear";
 
@@ -68,34 +65,6 @@ public class TrackEventActivity extends AppCompatActivity implements OnDateSelec
         Button btnTitl = (Button) findViewById(R.id.month_label);
         btnTitl.setText(new SimpleDateFormat("MMMM yyyy", Locale.getDefault()).format(currentDay));
         btnTitl.setOnClickListener(this);
-
-
-
-
-//        calendar = (MaterialCalendarView) findViewById(R.id.calendarView);
-//        calendar.setOnDateChangedListener(this);
-//        calendar.setTitleFormatter(new DateFormatTitleFormatter(new SimpleDateFormat(
-//                "MMMM yyyy", Locale.getDefault()
-//        )));
-//        calendar.setSelectedDate(CalendarDay.today());
-//        calendar.addDecorator(this);
-//        calendar.setDateTextAppearance(R.style.TrackCalTextAppearance);
-//
-//        //currentDay = CalendarDay.today().getDate();
-//
-//        decor_plan = new EventDecorator(this);
-//        decor_skip = new EventDecorator(this);
-//        decor_due = new EventDecorator(this);
-//        decor_cancel = new EventDecorator(this);
-//
-//        OneDayDecorator decor_today = new OneDayDecorator();
-//
-//        calendar.addDecorator(decor_plan);
-//        calendar.addDecorator(decor_skip);
-//        calendar.addDecorator(decor_due);
-//        calendar.addDecorator(decor_cancel);
-//        calendar.addDecorator(decor_today);
-
 
         Intent i = getIntent();
         currentRowId = i.getLongExtra(EditEventActivity.ACTION_EXTRA_EVENTID, -1);
@@ -317,87 +286,51 @@ public class TrackEventActivity extends AppCompatActivity implements OnDateSelec
             rv.addView(rowRv);
         }
 
-
-//        //0 - ничего
-//        ArrayList<CalendarDay> dates_plan = new ArrayList<>();  //1 и из будущего, включая сегодня
-//        ArrayList<CalendarDay> dates_skip = new ArrayList<>();  //1 и из прошлого
-//        ArrayList<CalendarDay> dates_due = new ArrayList<>();   //2 - выполнено
-//        ArrayList<CalendarDay> dates_cancel = new ArrayList<>();//3 - не выполнено
-//
-//        for (Entry<Date,Integer> entry : trackrec.trackdates.entrySet()){
-//            int et = entry.getValue();
-//            if (et==1){
-//                CalendarDay dt = CalendarDay.from(entry.getKey());
-//                CalendarDay today = CalendarDay.from(new Date());
-//                if (today.isAfter(dt))
-//                    {dates_skip.add(dt);}
-//                else
-//                    {dates_plan.add(dt);}
-//            }
-//            else if (et==2){
-//                dates_due.add(CalendarDay.from(entry.getKey()));
-//            }
-//            else if (et==3){
-//                dates_cancel.add(CalendarDay.from(entry.getKey()));
-//            }
-//        }
-//
-//        decor_plan.fillEventDecorator(ContextCompat.getColor(this,R.color.track_plan), dates_plan);
-//        decor_skip.fillEventDecorator(ContextCompat.getColor(this, R.color.track_skip), dates_skip);
-//        decor_due.fillEventDecorator(ContextCompat.getColor(this, R.color.track_due), dates_due);
-//        decor_cancel.fillEventDecorator(ContextCompat.getColor(this, R.color.track_cancel), dates_cancel);
-//
-//        calendar.invalidateDecorators();
-
-
     }
 
 
-    @Override
-    public void onDateSelected(@NonNull MaterialCalendarView widget, @NonNull CalendarDay date, boolean selected) {
-        //If you change a decorate, you need to invalidate decorators
-        //если дата не равна выбранной, то ничего не делаем, иначе меняем статус по алгоритму
-        Date selDate = date.getDate();
-
-        CalendarDay selCalDate = CalendarDay.from(selDate);
-        CalendarDay today = CalendarDay.from(new Date());
-
-//        if (!currentDay.equals(selDate)){
-            currentDay = selDate;
-//        }else{
-            if (decor_plan.containDate(selDate)){
-                //это был план, тогда меняем его на выполнено, если дата текущая или ранее, или очищаем, если дата в будущем
-                if(today.isBefore(selCalDate)){
-                    deleteCurrRec();
-                }else{
-                    makeCurrExec();
-                }
-            }
-            else if(decor_skip.containDate(selDate)){
-                //это был пропущенный план, он становится выполнен
-                makeCurrExec();
-            }
-            else if(decor_due.containDate(selDate)){
-                //это было выполнено, теперь меняем на не выполнено
-                makeCurrNoExec();
-            }
-            else if(decor_cancel.containDate(selDate)){
-                //это было не выполнено - очищаем
-                deleteCurrRec();
-            }
-            else{
-                //если ничего не было, то стало запланировано, даже если пропущено в прошлом
-                makeCurrPlan();
-            }
-//        }
-    }
+//    @Override
+//    public void onDateSelected(@NonNull MaterialCalendarView widget, @NonNull CalendarDay date, boolean selected) {
+//        //If you change a decorate, you need to invalidate decorators
+//        //если дата не равна выбранной, то ничего не делаем, иначе меняем статус по алгоритму
+//        Date selDate = date.getDate();
+//
+//        CalendarDay selCalDate = CalendarDay.from(selDate);
+//        CalendarDay today = CalendarDay.from(new Date());
+//
+//            currentDay = selDate;
+//            if (decor_plan.containDate(selDate)){
+//                //это был план, тогда меняем его на выполнено, если дата текущая или ранее, или очищаем, если дата в будущем
+//                if(today.isBefore(selCalDate)){
+//                    deleteCurrRec();
+//                }else{
+//                    makeCurrExec();
+//                }
+//            }
+//            else if(decor_skip.containDate(selDate)){
+//                //это был пропущенный план, он становится выполнен
+//                makeCurrExec();
+//            }
+//            else if(decor_due.containDate(selDate)){
+//                //это было выполнено, теперь меняем на не выполнено
+//                makeCurrNoExec();
+//            }
+//            else if(decor_cancel.containDate(selDate)){
+//                //это было не выполнено - очищаем
+//                deleteCurrRec();
+//            }
+//            else{
+//                //если ничего не было, то стало запланировано, даже если пропущено в прошлом
+//                makeCurrPlan();
+//            }
+//    }
 
     private void makeCurrPlan() {
         PlanDoDBOpenHelper helper = PlanDoDBOpenHelper.getInstance(this);
         helper.updateTrackEventOnDate(currentRowId, currentDay, 1);
         sendRefreshWidget(this);
         refreshDecorators();
-        ShowToast(calendar.getContext(), R.string.to_planned, currentDay);
+        ShowToast(this, R.string.to_planned, currentDay);
     }
 
     private void makeCurrNoExec() {
@@ -405,7 +338,7 @@ public class TrackEventActivity extends AppCompatActivity implements OnDateSelec
         helper.updateTrackEventOnDate(currentRowId, currentDay, 3);
         sendRefreshWidget(this);
         refreshDecorators();
-        ShowToast(calendar.getContext(), R.string.to_cancel, currentDay);
+        ShowToast(this, R.string.to_cancel, currentDay);
     }
 
     private void makeCurrExec() {
@@ -413,7 +346,7 @@ public class TrackEventActivity extends AppCompatActivity implements OnDateSelec
         helper.updateTrackEventOnDate(currentRowId, currentDay, 2);
         sendRefreshWidget(this);
         refreshDecorators();
-        ShowToast(calendar.getContext(), R.string.to_due, currentDay);
+        ShowToast(this, R.string.to_due, currentDay);
     }
 
     public void deleteCurrRec(){
@@ -422,7 +355,7 @@ public class TrackEventActivity extends AppCompatActivity implements OnDateSelec
         helper.delTrackEventOnDate(currentRowId, currentDay);
         sendRefreshWidget(this);
         refreshDecorators();
-        ShowToast(calendar.getContext(), R.string.to_clean, currentDay);
+        ShowToast(this, R.string.to_clean, currentDay);
     }
 
     private void ShowToast(Context context, int resID, Date day) {
@@ -441,14 +374,14 @@ public class TrackEventActivity extends AppCompatActivity implements OnDateSelec
     }
 
 
-    @Override
-    public boolean shouldDecorate(CalendarDay day) {
-        return true;
-    }
+//    @Override
+//    public boolean shouldDecorate(CalendarDay day) {
+//        return true;
+//    }
 
-    @Override
-    public void decorate(DayViewFacade view) {
-        view.setSelectionDrawable(ContextCompat.getDrawable(this, R.drawable.my_selector));
-    }
+//    @Override
+//    public void decorate(DayViewFacade view) {
+//        view.setSelectionDrawable(ContextCompat.getDrawable(this, R.drawable.my_selector));
+//    }
 
 }

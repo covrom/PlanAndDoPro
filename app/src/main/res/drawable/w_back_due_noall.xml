@@ -20,7 +20,8 @@
         <shape
             android:shape="ring"
             android:innerRadius="1dp"
-            android:thickness="1dp">
+            android:thickness="1dp"
+            android:useLevel="false">
             <solid android:color="@color/track_due_chain" />
         </shape>
     </item>
@@ -28,7 +29,8 @@
         <shape
             android:shape="ring"
             android:innerRadius="1dp"
-            android:thickness="1dp">
+            android:thickness="1dp"
+            android:useLevel="false">
             <solid android:color="@color/track_due_chain" />
         </shape>
     </item>
