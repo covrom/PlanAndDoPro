@@ -289,44 +289,23 @@ public class TrackEventActivity extends AppCompatActivity implements OnDateSelec
                 }
 
                 View cellRv = inflater.inflate(R.layout.activity_track_cell_day,(ViewGroup) rowRv,false);
-                TextView atDay = (TextView) cellRv.findViewById(R.id.at_day);
-                atDay.setText(Integer.toString(cal.get(Calendar.DAY_OF_MONTH)));
+                TrackTextView atDay = (TrackTextView) cellRv.findViewById(R.id.at_day);
+                atDay.setEventDate(cal.getTime());
+                atDay.setEventType(et[day]);
 
-                if (isToday) {
-                    atDay.setTextColor(ContextCompat.getColor(this, R.color.foreground_textday_black));
-                    atDay.setTypeface(null, Typeface.BOLD);
-                } else if (inMonth) {
-
-                    atDay.setTextColor(ContextCompat.getColor(this, R.color.foreground_textday_black));
+                if (inMonth) {
+                    atDay.setEnabledState(true);
+                    atDay.setLeftConnected(lastIs2);
+                    atDay.setRightConnected(nextIs2);
+                    atDay.setHasComment(true);
+                    atDay.build();
 
                     if (et[day] == 1) {
-                        //это был план, тогда меняем его на выполнено, если дата текущая или ранее, или очищаем, если дата в будущем
-                        if (inFuture || isToday) {
-                            atDay.setBackgroundResource(R.drawable.w_back_plan);
-                        } else {
-                            atDay.setBackgroundResource(R.drawable.w_back_skip);
-                        }
                         lastIs2 = false;
                     } else if (et[day] == 2) {
-
-                        if (lastIs2 && nextIs2)
-                            atDay.setBackgroundResource(R.drawable.w_back_due);
-                        else if (lastIs2 && !nextIs2)
-                            atDay.setBackgroundResource(R.drawable.w_back_due_noright);
-                        else if (!lastIs2 && nextIs2)
-                            atDay.setBackgroundResource(R.drawable.w_back_due_noleft);
-                        else if (!lastIs2 && !nextIs2)
-                            atDay.setBackgroundResource(R.drawable.w_back_due_noall);
-
                         lastIs2 = true;
                     } else if (et[day] == 3) {
-                        atDay.setBackgroundResource(R.drawable.w_back_cancel);
                         lastIs2 = false;
-                    } else {
-                        if (lastIs2 && nextIs2)
-                            atDay.setBackgroundResource(R.drawable.w_back_empty_chain);
-                        else
-                            atDay.setBackgroundResource(R.drawable.w_back_empty);
                     }
 
                 }
