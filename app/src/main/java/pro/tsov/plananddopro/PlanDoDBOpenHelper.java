@@ -11,8 +11,6 @@ import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.util.Log;
 
-import com.prolificinteractive.materialcalendarview.CalendarDay;
-
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -231,7 +229,7 @@ public class PlanDoDBOpenHelper extends SQLiteOpenHelper {
         }
         hash.put(iso8601Format.format(cal_weekend.getTime()), i);//седьмой день
 
-        CalendarDay calWeekendDay = CalendarDay.from(cal_weekend);
+        //CalendarDay calWeekendDay = CalendarDay.from(cal_weekend);
 
         int[] Result = {0,0,0,0,0,0,0};
 
