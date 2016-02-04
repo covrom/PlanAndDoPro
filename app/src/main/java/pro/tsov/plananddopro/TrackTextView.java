@@ -143,16 +143,17 @@ public class TrackTextView extends TextView {
             if (eventType==2){
                 off = TrackFactory.convertDiptoPix(context,8);
                 rad = TrackFactory.convertDiptoPix(context, 3);
-                paint.setColor(ContextCompat.getColor(context, R.color.foreground_full));
-                canvas.drawCircle(getWidth()-off,getHeight()/2,rad, paint);
+                paint.setColor(ContextCompat.getColor(context, R.color.commentpoint));
+                canvas.drawCircle(getWidth() - off, getHeight() / 2, rad, paint);
                 canvas.drawCircle(off, getHeight() / 2, rad, paint);
 
+                rad = TrackFactory.convertDiptoPix(context, 2);
                 paint.setColor(ContextCompat.getColor(context, R.color.track_due_chain));
-                canvas.drawCircle(getWidth() - off, getHeight() / 2, (int)(rad * 0.8), paint);
-                canvas.drawCircle(off,getHeight()/2,(int)(rad*0.8), paint);
+                canvas.drawCircle(getWidth() - off, getHeight() / 2, rad, paint);
+                canvas.drawCircle(off,getHeight()/2,rad, paint);
 
                 if(leftConnected){
-                    paint.setColor(ContextCompat.getColor(context, R.color.foreground_full));
+                    paint.setColor(ContextCompat.getColor(context, R.color.commentpoint));
                     paint.setStrokeWidth(TrackFactory.convertDiptoPix(context, 2));
                     canvas.drawLine(0, getHeight() / 2, off, getHeight() / 2, paint);
                     paint.setColor(ContextCompat.getColor(context, R.color.track_due_chain));
@@ -160,7 +161,7 @@ public class TrackTextView extends TextView {
                     canvas.drawLine(0, getHeight() / 2, off, getHeight() / 2, paint);
                 }
                 if(rightConnected){
-                    paint.setColor(ContextCompat.getColor(context, R.color.foreground_full));
+                    paint.setColor(ContextCompat.getColor(context, R.color.commentpoint));
                     paint.setStrokeWidth(TrackFactory.convertDiptoPix(context, 2));
                     canvas.drawLine(getWidth() - off, getHeight() / 2, getWidth() - 1, getHeight() / 2, paint);
                     paint.setColor(ContextCompat.getColor(context, R.color.track_due_chain));
@@ -170,7 +171,7 @@ public class TrackTextView extends TextView {
 
             }else{
                 if(leftConnected&&rightConnected){
-                    paint.setColor(ContextCompat.getColor(context, R.color.foreground_full));
+                    paint.setColor(ContextCompat.getColor(context, R.color.commentpoint));
                     paint.setStrokeWidth(TrackFactory.convertDiptoPix(context, 2));
                     canvas.drawLine(0, getHeight() / 2, getWidth() - 1, getHeight() / 2, paint);
                     paint.setColor(ContextCompat.getColor(context, R.color.track_due_chain));
