@@ -5,7 +5,9 @@ import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.Typeface;
+import android.graphics.drawable.Drawable;
 import android.graphics.drawable.GradientDrawable;
+import android.graphics.drawable.LayerDrawable;
 import android.support.v4.content.ContextCompat;
 import android.util.AttributeSet;
 import android.widget.TextView;
@@ -92,37 +94,37 @@ public class TrackTextView extends TextView {
         setText(Integer.toString(monthDay));
 
         if (enabledState) {
-            GradientDrawable drawable=null;
+            Drawable drawable=null;
             if (eventType==1){
                 //это был план, тогда меняем его на выполнено, если дата текущая или ранее, или очищаем, если дата в будущем
                 if (inFuture||isToday)
                 {
-                    drawable = (GradientDrawable) ContextCompat.getDrawable(context, R.drawable.w_back_plan).mutate();
+                    drawable = ContextCompat.getDrawable(context, R.drawable.w_back_plan).mutate();
                 }
                 else
                 {
-                    drawable = (GradientDrawable) ContextCompat.getDrawable(context, R.drawable.w_back_skip).mutate();
+                    drawable = ContextCompat.getDrawable(context, R.drawable.w_back_skip).mutate();
                 }
             }
             else if (eventType==2){
 
                 if (leftConnected && rightConnected)
-                    drawable = (GradientDrawable) ContextCompat.getDrawable(context, R.drawable.w_back_due).mutate();
+                    drawable = ContextCompat.getDrawable(context, R.drawable.w_back_due).mutate();
                 else if (leftConnected && !rightConnected)
-                    drawable = (GradientDrawable) ContextCompat.getDrawable(context, R.drawable.w_back_due_noright).mutate();
+                    drawable = ContextCompat.getDrawable(context, R.drawable.w_back_due_noright).mutate();
                 else if (!leftConnected && rightConnected)
-                    drawable = (GradientDrawable) ContextCompat.getDrawable(context, R.drawable.w_back_due_noleft).mutate();
+                    drawable = ContextCompat.getDrawable(context, R.drawable.w_back_due_noleft).mutate();
                 else if (!leftConnected && !rightConnected)
-                    drawable = (GradientDrawable) ContextCompat.getDrawable(context, R.drawable.w_back_due_noall).mutate();
+                    drawable = ContextCompat.getDrawable(context, R.drawable.w_back_due_noall).mutate();
             }
             else if (eventType==3){
-                drawable = (GradientDrawable) ContextCompat.getDrawable(context, R.drawable.w_back_cancel).mutate();
+                drawable = ContextCompat.getDrawable(context, R.drawable.w_back_cancel).mutate();
             }
             else{
                 if(leftConnected && rightConnected)
-                    drawable = (GradientDrawable) ContextCompat.getDrawable(context, R.drawable.w_back_empty_chain).mutate();
+                    drawable = ContextCompat.getDrawable(context, R.drawable.w_back_empty_chain).mutate();
                 else
-                    drawable = (GradientDrawable) ContextCompat.getDrawable(context, R.drawable.w_back_empty).mutate();
+                    drawable = ContextCompat.getDrawable(context, R.drawable.w_back_empty).mutate();
             }
             setBackground(drawable);
 
@@ -143,8 +145,10 @@ public class TrackTextView extends TextView {
         super.onDraw(canvas);
         if (hasComment) {
             Paint paint = new Paint();
-            paint.setColor(ContextCompat.getColor(context,R.color.commentpoint));
-            canvas.drawCircle(10,10,5, paint);
+            paint.setColor(ContextCompat.getColor(context, R.color.commentpoint));
+            int off = TrackFactory.convertDiptoPix(context,8);
+            int rad = TrackFactory.convertDiptoPix(context, 4);
+            canvas.drawCircle(getWidth()-off,off,rad, paint);
         }
     }
 }
