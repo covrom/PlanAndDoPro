@@ -11,8 +11,8 @@ android {
         applicationId 'pro.tsov.plananddopro'
         minSdkVersion 19
         targetSdkVersion 21
-        versionCode 14
-        versionName '2.3'
+        versionCode 15
+        versionName '2.4'
     }
     buildTypes {
         release {
@@ -28,6 +28,5 @@ dependencies {
     compile fileTree(dir: 'libs', include: ['*.jar'])
     testCompile 'junit:junit:4.12'
     compile 'com.android.support:design:23.1.1'
-    compile 'com.prolificinteractive:material-calendarview:1.1.0'
     compile 'com.android.support:appcompat-v7:23.1.1'
 }

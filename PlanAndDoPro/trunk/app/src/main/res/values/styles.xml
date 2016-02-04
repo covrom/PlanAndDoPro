@@ -13,7 +13,4 @@
         <item name="colorAccent">@color/colorAccent</item>
     </style>
 
-    <style name="TrackCalTextAppearance" parent="TextAppearance.MaterialCalendarWidget.Date">
-        <item name="android:textColor">@color/my_date_text_color</item>
-    </style>
 </resources>
