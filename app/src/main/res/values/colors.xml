@@ -15,6 +15,7 @@
     <color name="foreground_textday">#7fff</color>
     <color name="foreground_textday_black">#000</color>
     <color name="commentpoint">#afff</color>
+    <color name="commentpointsel">#AA3F51B5</color>
     <color name="foreground_today">#fff</color>
     <color name="track_plan">#CF64B5F6</color>
     <color name="track_plan_low">#CF2196F3</color>

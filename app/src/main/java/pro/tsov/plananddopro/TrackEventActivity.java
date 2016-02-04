@@ -4,17 +4,17 @@
 
 package pro.tsov.plananddopro;
 
+import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.content.SharedPreferences;
 import android.graphics.Typeface;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
-import android.support.annotation.NonNull;
-import android.support.v4.content.ContextCompat;
+import android.support.v4.content.LocalBroadcastManager;
 import android.support.v7.app.AppCompatActivity;
 import android.text.format.DateFormat;
-import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -22,13 +22,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.TextView;
-import android.widget.Toast;
-
-import com.prolificinteractive.materialcalendarview.CalendarDay;
-import com.prolificinteractive.materialcalendarview.DayViewDecorator;
-import com.prolificinteractive.materialcalendarview.DayViewFacade;
-import com.prolificinteractive.materialcalendarview.MaterialCalendarView;
-import com.prolificinteractive.materialcalendarview.OnDateSelectedListener;
 
 import java.text.DateFormatSymbols;
 import java.text.SimpleDateFormat;
@@ -71,7 +64,22 @@ public class TrackEventActivity extends AppCompatActivity implements View.OnClic
         trackrec = new TrackRec(currentRowId);
         refreshFromDB();
 
+        LocalBroadcastManager bManager = LocalBroadcastManager.getInstance(this);
+        IntentFilter intentFilter = new IntentFilter();
+        intentFilter.addAction(TrackWidget.ACTION_REFRESH);
+        bManager.registerReceiver(bReceiver, intentFilter);
+
     }
+
+    private BroadcastReceiver bReceiver = new BroadcastReceiver() {
+
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            if (intent.getAction().equals(TrackWidget.ACTION_REFRESH)) {
+                refreshFromDB();
+            }
+        }
+    };
 
     @Override
     public void onClick(View v) {
@@ -119,7 +127,7 @@ public class TrackEventActivity extends AppCompatActivity implements View.OnClic
         refreshFromDB();
     }
 
-        private void refreshFromDB(){
+    public void refreshFromDB(){
         if (currentRowId != -1) {
             //считываем из базы
             PlanDoDBOpenHelper helper = PlanDoDBOpenHelper.getInstance(this);
@@ -184,8 +192,6 @@ public class TrackEventActivity extends AppCompatActivity implements View.OnClic
         ViewGroup rv = (ViewGroup) findViewById(R.id.calendar);
 
         Calendar cal = Calendar.getInstance();
-        int today = cal.get(Calendar.DAY_OF_YEAR);
-        int todayYear = cal.get(Calendar.YEAR);
         int thisMonth = sp.getInt(PREF_MONTH, cal.get(Calendar.MONTH));
         int thisYear = sp.getInt(PREF_YEAR, cal.get(Calendar.YEAR));
         cal.set(Calendar.DAY_OF_MONTH, 1);
@@ -233,13 +239,6 @@ public class TrackEventActivity extends AppCompatActivity implements View.OnClic
 
             for (int day = 0; day < 7; day++) {
                 boolean inMonth = cal.get(Calendar.MONTH) == thisMonth;
-                boolean inYear = cal.get(Calendar.YEAR) == todayYear;
-                boolean isToday = inYear && inMonth && (cal.get(Calendar.DAY_OF_YEAR) == today);
-
-                boolean inFuture = cal.get(Calendar.YEAR) > todayYear;
-                if (inYear) {
-                    inFuture = cal.get(Calendar.DAY_OF_YEAR) > today;
-                }
 
                 //если последний = 2 и ближайший следующий тоже, то цепочка, и не меняем, иначе - не цепочка
                 nextIs2 = false;
@@ -266,7 +265,8 @@ public class TrackEventActivity extends AppCompatActivity implements View.OnClic
                     atDay.setEnabledState(true);
                     atDay.setLeftConnected(lastIs2);
                     atDay.setRightConnected(nextIs2);
-                    atDay.setHasComment(true);
+                    //atDay.setHasComment(true);
+                    atDay.setCurrentRowId(currentRowId);
                     atDay.build();
 
                     if (et[day] == 1) {
@@ -287,101 +287,5 @@ public class TrackEventActivity extends AppCompatActivity implements View.OnClic
         }
 
     }
-
-
-//    @Override
-//    public void onDateSelected(@NonNull MaterialCalendarView widget, @NonNull CalendarDay date, boolean selected) {
-//        //If you change a decorate, you need to invalidate decorators
-//        //если дата не равна выбранной, то ничего не делаем, иначе меняем статус по алгоритму
-//        Date selDate = date.getDate();
-//
-//        CalendarDay selCalDate = CalendarDay.from(selDate);
-//        CalendarDay today = CalendarDay.from(new Date());
-//
-//            currentDay = selDate;
-//            if (decor_plan.containDate(selDate)){
-//                //это был план, тогда меняем его на выполнено, если дата текущая или ранее, или очищаем, если дата в будущем
-//                if(today.isBefore(selCalDate)){
-//                    deleteCurrRec();
-//                }else{
-//                    makeCurrExec();
-//                }
-//            }
-//            else if(decor_skip.containDate(selDate)){
-//                //это был пропущенный план, он становится выполнен
-//                makeCurrExec();
-//            }
-//            else if(decor_due.containDate(selDate)){
-//                //это было выполнено, теперь меняем на не выполнено
-//                makeCurrNoExec();
-//            }
-//            else if(decor_cancel.containDate(selDate)){
-//                //это было не выполнено - очищаем
-//                deleteCurrRec();
-//            }
-//            else{
-//                //если ничего не было, то стало запланировано, даже если пропущено в прошлом
-//                makeCurrPlan();
-//            }
-//    }
-
-    private void makeCurrPlan() {
-        PlanDoDBOpenHelper helper = PlanDoDBOpenHelper.getInstance(this);
-        helper.updateTrackEventOnDate(currentRowId, currentDay, 1);
-        sendRefreshWidget(this);
-        refreshDecorators();
-        ShowToast(this, R.string.to_planned, currentDay);
-    }
-
-    private void makeCurrNoExec() {
-        PlanDoDBOpenHelper helper = PlanDoDBOpenHelper.getInstance(this);
-        helper.updateTrackEventOnDate(currentRowId, currentDay, 3);
-        sendRefreshWidget(this);
-        refreshDecorators();
-        ShowToast(this, R.string.to_cancel, currentDay);
-    }
-
-    private void makeCurrExec() {
-        PlanDoDBOpenHelper helper = PlanDoDBOpenHelper.getInstance(this);
-        helper.updateTrackEventOnDate(currentRowId, currentDay, 2);
-        sendRefreshWidget(this);
-        refreshDecorators();
-        ShowToast(this, R.string.to_due, currentDay);
-    }
-
-    public void deleteCurrRec(){
-        //удаляем запись
-        PlanDoDBOpenHelper helper = PlanDoDBOpenHelper.getInstance(this);
-        helper.delTrackEventOnDate(currentRowId, currentDay);
-        sendRefreshWidget(this);
-        refreshDecorators();
-        ShowToast(this, R.string.to_clean, currentDay);
-    }
-
-    private void ShowToast(Context context, int resID, Date day) {
-        SimpleDateFormat sdf = new SimpleDateFormat("dd");
-        String ttx = context.getResources().getString(resID) + " " + sdf.format(day);
-        Toast tt = Toast.makeText(context, ttx, Toast.LENGTH_SHORT);
-        tt.setGravity(Gravity.BOTTOM, 0, 8);
-        tt.show();
-    }
-
-    public static void sendRefreshWidget(Context ctx){
-        Intent intent = new Intent(ctx, TrackWidget.class);
-        intent.setAction(TrackWidget.ACTION_REFRESH);
-        ctx.sendBroadcast(intent);
-        TrackAlarmReceiver.sendActionOverAlarm(ctx,5000,false);
-    }
-
-
-//    @Override
-//    public boolean shouldDecorate(CalendarDay day) {
-//        return true;
-//    }
-
-//    @Override
-//    public void decorate(DayViewFacade view) {
-//        view.setSelectionDrawable(ContextCompat.getDrawable(this, R.drawable.my_selector));
-//    }
 
 }
