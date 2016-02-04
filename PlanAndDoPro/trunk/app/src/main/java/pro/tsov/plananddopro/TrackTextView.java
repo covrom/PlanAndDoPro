@@ -163,20 +163,20 @@ public class TrackTextView extends TextView {
                 if(rightConnected){
                     paint.setColor(ContextCompat.getColor(context, R.color.commentpoint));
                     paint.setStrokeWidth(TrackFactory.convertDiptoPix(context, 2));
-                    canvas.drawLine(getWidth() - off, getHeight() / 2, getWidth() - 1, getHeight() / 2, paint);
+                    canvas.drawLine(getWidth() - off, getHeight() / 2, getWidth(), getHeight() / 2, paint);
                     paint.setColor(ContextCompat.getColor(context, R.color.track_due_chain));
                     paint.setStrokeWidth(TrackFactory.convertDiptoPix(context, 1));
-                    canvas.drawLine(getWidth() - off, getHeight() / 2, getWidth() - 1, getHeight() / 2, paint);
+                    canvas.drawLine(getWidth() - off, getHeight() / 2, getWidth(), getHeight() / 2, paint);
                 }
 
             }else{
                 if(leftConnected&&rightConnected){
                     paint.setColor(ContextCompat.getColor(context, R.color.commentpoint));
                     paint.setStrokeWidth(TrackFactory.convertDiptoPix(context, 2));
-                    canvas.drawLine(0, getHeight() / 2, getWidth() - 1, getHeight() / 2, paint);
+                    canvas.drawLine(0, getHeight() / 2, getWidth(), getHeight() / 2, paint);
                     paint.setColor(ContextCompat.getColor(context, R.color.track_due_chain));
                     paint.setStrokeWidth(TrackFactory.convertDiptoPix(context, 1));
-                    canvas.drawLine(0, getHeight() / 2, getWidth() - 1, getHeight() / 2, paint);
+                    canvas.drawLine(0, getHeight() / 2, getWidth(), getHeight() / 2, paint);
                 }
             }
         }
