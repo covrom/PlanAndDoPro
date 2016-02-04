@@ -12,6 +12,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.database.Cursor;
 import android.graphics.BitmapFactory;
+import android.support.v4.content.LocalBroadcastManager;
 
 import java.text.DateFormat;
 import java.text.ParseException;
@@ -154,6 +155,7 @@ public class TrackAlarmService extends IntentService {
         Intent intent = new Intent(context, TrackWidget.class);
         intent.setAction(TrackWidget.ACTION_REFRESH);
         context.sendBroadcast(intent);
+        LocalBroadcastManager.getInstance(context).sendBroadcast(intent);
         TrackAlarmReceiver.sendActionOverAlarm(context,5000,false);
     }
 
