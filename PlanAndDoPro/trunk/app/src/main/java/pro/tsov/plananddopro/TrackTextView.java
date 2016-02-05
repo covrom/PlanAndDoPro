@@ -162,6 +162,7 @@ public class TrackTextView extends TextView implements View.OnClickListener {
         int off;
         int rad;
         Paint paint = new Paint();
+        paint.setAntiAlias(true);
         paint.setStrokeWidth(TrackFactory.convertDiptoPix(context, 2));
 
         if (hasComment||isSelected) {
