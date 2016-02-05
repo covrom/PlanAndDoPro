@@ -5,17 +5,19 @@
 
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content"
-    android:useDefaultMargins="true"
-    android:orientation="horizontal">
+    android:layout_height="72dp"
+
+    android:orientation="horizontal"
+    android:paddingTop="8dp"
+    android:paddingBottom="8dp"
+    >
 
     <TextView
-        android:layout_width="wrap_content"
+        android:layout_width="56dp"
         android:layout_height="wrap_content"
-        android:textAppearance="?android:attr/textAppearanceLarge"
         android:id="@+id/itemIcon"
         android:gravity="center_vertical|left"
-        android:paddingRight="5dp"
+        android:paddingRight="8dp"
         android:layout_gravity="center_vertical"
         android:textSize="32sp"
         android:text="Icon"
@@ -24,7 +26,8 @@
     <LinearLayout
         android:orientation="vertical"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content">
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_vertical">
 
         <LinearLayout
             android:orientation="horizontal"
@@ -34,11 +37,12 @@
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:textAppearance="?android:attr/textAppearanceMedium"
                 android:text="Medium Text"
                 android:id="@+id/itemName"
                 android:layout_weight="10"
-                android:gravity="fill_horizontal" />
+                android:gravity="fill_horizontal"
+                android:textSize="16sp"
+                android:textColor="@color/primary_text_default_material_light" />
 
             <TextView
                 android:layout_width="wrap_content"
@@ -60,11 +64,12 @@
             <TextView
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:textAppearance="?android:attr/textAppearanceSmall"
                 android:text="Small Text"
                 android:id="@+id/itemDesc"
                 android:gravity="fill_horizontal"
-                android:layout_weight="10" />
+                android:layout_weight="10"
+                android:textSize="14sp"
+                android:textColor="@color/secondary_text_default_material_light" />
 
             <TextView
                 android:layout_width="wrap_content"
