@@ -12,12 +12,13 @@ import android.content.SharedPreferences;
 import android.graphics.Typeface;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
+import android.support.design.widget.FloatingActionButton;
+import android.support.v4.content.ContextCompat;
 import android.support.v4.content.LocalBroadcastManager;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.Toolbar;
 import android.text.format.DateFormat;
 import android.view.LayoutInflater;
-import android.view.Menu;
-import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
@@ -45,6 +46,25 @@ public class TrackEventActivity extends AppCompatActivity implements View.OnClic
 
         setContentView(R.layout.activity_track_event);
 
+        Toolbar toolbar = (Toolbar) findViewById(R.id.main_toolbar);
+        toolbar.setTitle("");
+
+        FloatingActionButton editFAB = (FloatingActionButton) findViewById(R.id.editFAB);
+        editFAB.setRippleColor(ContextCompat.getColor(this, R.color.colorAccentBright));
+        editFAB.setOnClickListener(new View.OnClickListener() {
+            public void onClick(View v) {
+                editEvent();
+            }
+        });
+
+        FloatingActionButton sendFAB = (FloatingActionButton) findViewById(R.id.sendFAB);
+        sendFAB.setRippleColor(ContextCompat.getColor(this, R.color.colorAccentBright));
+        sendFAB.setOnClickListener(new View.OnClickListener() {
+            public void onClick(View v) {
+                sendEvent();
+            }
+        });
+
         currentDay = Calendar.getInstance().getTime();
 
         Button btnPrev = (Button) findViewById(R.id.prev_month_button);
@@ -71,6 +91,7 @@ public class TrackEventActivity extends AppCompatActivity implements View.OnClic
 
     }
 
+
     private BroadcastReceiver bReceiver = new BroadcastReceiver() {
 
         @Override
@@ -80,6 +101,21 @@ public class TrackEventActivity extends AppCompatActivity implements View.OnClic
             }
         }
     };
+
+    private void editEvent(){
+        Intent i = new Intent(this, EditEventActivity.class);
+        i.putExtra(EditEventActivity.ACTION_EXTRA_EVENTID, currentRowId);//новый
+        startActivityForResult(i, 2);
+    }
+
+    private void sendEvent() {
+        TrackRec tr = new TrackRec(currentRowId);
+        Intent sendIntent = new Intent();
+        sendIntent.setAction(Intent.ACTION_SEND);
+        sendIntent.putExtra(Intent.EXTRA_TEXT, tr.getTabbedText(PlanDoDBOpenHelper.getInstance(this)));
+        sendIntent.setType("text/plain");
+        startActivity(sendIntent);
+    }
 
     @Override
     public void onClick(View v) {
@@ -151,30 +187,30 @@ public class TrackEventActivity extends AppCompatActivity implements View.OnClic
 
     }
 
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        getMenuInflater().inflate(R.menu.menu_track, menu);
-        return super.onCreateOptionsMenu(menu);
-    }
-
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        int id = item.getItemId();
-        if (id == R.id.track_toeditor){
-            Intent i = new Intent(this,EditEventActivity.class);
-            i.putExtra(EditEventActivity.ACTION_EXTRA_EVENTID, currentRowId);//новый
-            startActivityForResult(i, 2);
-        }
-        if (id == R.id.track_sendtabbed) {
-            TrackRec tr = new TrackRec(currentRowId);
-            Intent sendIntent = new Intent();
-            sendIntent.setAction(Intent.ACTION_SEND);
-            sendIntent.putExtra(Intent.EXTRA_TEXT, tr.getTabbedText(PlanDoDBOpenHelper.getInstance(this)));
-            sendIntent.setType("text/plain");
-            startActivity(sendIntent);
-        }
-        return super.onOptionsItemSelected(item);
-    }
+//    @Override
+//    public boolean onCreateOptionsMenu(Menu menu) {
+//        getMenuInflater().inflate(R.menu.menu_track, menu);
+//        return super.onCreateOptionsMenu(menu);
+//    }
+//
+//    @Override
+//    public boolean onOptionsItemSelected(MenuItem item) {
+//        int id = item.getItemId();
+//        if (id == R.id.track_toeditor){
+//            Intent i = new Intent(this,EditEventActivity.class);
+//            i.putExtra(EditEventActivity.ACTION_EXTRA_EVENTID, currentRowId);//новый
+//            startActivityForResult(i, 2);
+//        }
+//        if (id == R.id.track_sendtabbed) {
+//            TrackRec tr = new TrackRec(currentRowId);
+//            Intent sendIntent = new Intent();
+//            sendIntent.setAction(Intent.ACTION_SEND);
+//            sendIntent.putExtra(Intent.EXTRA_TEXT, tr.getTabbedText(PlanDoDBOpenHelper.getInstance(this)));
+//            sendIntent.setType("text/plain");
+//            startActivity(sendIntent);
+//        }
+//        return super.onOptionsItemSelected(item);
+//    }
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
