@@ -29,7 +29,8 @@
         android:src="@drawable/pdlogo"
         android:elevation="8dp"
         android:layout_centerHorizontal="true"
-        android:layout_alignParentLeft="false" />
+        android:layout_alignParentLeft="false"
+        android:layout_margin="16dp" />
 
     <android.support.design.widget.FloatingActionButton
         android:layout_height="wrap_content"
