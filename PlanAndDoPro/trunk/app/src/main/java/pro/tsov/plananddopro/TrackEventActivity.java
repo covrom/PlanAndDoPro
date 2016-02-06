@@ -187,30 +187,6 @@ public class TrackEventActivity extends AppCompatActivity implements View.OnClic
 
     }
 
-//    @Override
-//    public boolean onCreateOptionsMenu(Menu menu) {
-//        getMenuInflater().inflate(R.menu.menu_track, menu);
-//        return super.onCreateOptionsMenu(menu);
-//    }
-//
-//    @Override
-//    public boolean onOptionsItemSelected(MenuItem item) {
-//        int id = item.getItemId();
-//        if (id == R.id.track_toeditor){
-//            Intent i = new Intent(this,EditEventActivity.class);
-//            i.putExtra(EditEventActivity.ACTION_EXTRA_EVENTID, currentRowId);//новый
-//            startActivityForResult(i, 2);
-//        }
-//        if (id == R.id.track_sendtabbed) {
-//            TrackRec tr = new TrackRec(currentRowId);
-//            Intent sendIntent = new Intent();
-//            sendIntent.setAction(Intent.ACTION_SEND);
-//            sendIntent.putExtra(Intent.EXTRA_TEXT, tr.getTabbedText(PlanDoDBOpenHelper.getInstance(this)));
-//            sendIntent.setType("text/plain");
-//            startActivity(sendIntent);
-//        }
-//        return super.onOptionsItemSelected(item);
-//    }
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
