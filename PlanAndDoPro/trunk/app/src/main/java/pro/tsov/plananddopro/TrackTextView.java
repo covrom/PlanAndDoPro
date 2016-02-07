@@ -9,7 +9,6 @@ import android.graphics.Typeface;
 import android.graphics.drawable.Drawable;
 import android.preference.PreferenceManager;
 import android.support.v4.content.ContextCompat;
-import android.support.v4.content.LocalBroadcastManager;
 import android.util.AttributeSet;
 import android.view.Gravity;
 import android.view.View;
@@ -41,12 +40,16 @@ public class TrackTextView extends TextView implements View.OnClickListener {
     private long currentRowId=-1;
     public static final String PREF_SELDAY = "pro.tsov.plananddopro.trackactivityselectedmonth";
     public static final String PREF_SELYEAR = "pro.tsov.plananddopro.trackactivityselectedyear";
+    private TrackTextViewListener listener;
+
+    public interface TrackTextViewListener{ public void onChanged();}
 
     public TrackTextView(Context context, AttributeSet attrs, int defStyleAttr) {
         super(context, attrs, defStyleAttr);
         setEventDate(new Date());
         this.context = context;
         setOnClickListener(this);
+
     }
 
     public TrackTextView(Context context, AttributeSet attrs) {
@@ -54,6 +57,7 @@ public class TrackTextView extends TextView implements View.OnClickListener {
         setEventDate(new Date());
         this.context = context;
         setOnClickListener(this);
+
     }
 
     public TrackTextView(Context context) {
@@ -61,6 +65,11 @@ public class TrackTextView extends TextView implements View.OnClickListener {
         setEventDate(new Date());
         this.context = context;
         setOnClickListener(this);
+
+    }
+
+    public void setListener(TrackTextViewListener listener) {
+        this.listener = listener;
     }
 
     public void setEventDate(Date eventDate) {
@@ -219,7 +228,7 @@ public class TrackTextView extends TextView implements View.OnClickListener {
         PlanDoDBOpenHelper helper = PlanDoDBOpenHelper.getInstance(context);
         helper.updateTrackEventOnDate(currentRowId, eventDate, 1);
 //        eventType = 1;
-        sendRefreshWidget(context);
+        sendRefreshWidget();
         ShowToast(context, R.string.to_planned, eventDate);
 //        build();
 //        invalidate();
@@ -229,7 +238,7 @@ public class TrackTextView extends TextView implements View.OnClickListener {
         PlanDoDBOpenHelper helper = PlanDoDBOpenHelper.getInstance(context);
         helper.updateTrackEventOnDate(currentRowId, eventDate, 3);
 //        eventType = 3;
-        sendRefreshWidget(context);
+        sendRefreshWidget();
         ShowToast(context, R.string.to_cancel, eventDate);
 //        build();
 //        invalidate();
@@ -239,7 +248,7 @@ public class TrackTextView extends TextView implements View.OnClickListener {
         PlanDoDBOpenHelper helper = PlanDoDBOpenHelper.getInstance(context);
         helper.updateTrackEventOnDate(currentRowId, eventDate, 2);
 //        eventType = 2;
-        sendRefreshWidget(context);
+        sendRefreshWidget();
         ShowToast(context, R.string.to_due, eventDate);
 //        build();
 //        invalidate();
@@ -250,7 +259,7 @@ public class TrackTextView extends TextView implements View.OnClickListener {
         PlanDoDBOpenHelper helper = PlanDoDBOpenHelper.getInstance(context);
         helper.delTrackEventOnDate(currentRowId, eventDate);
 //        eventType = 0;
-        sendRefreshWidget(context);
+        sendRefreshWidget();
         ShowToast(context, R.string.to_clean, eventDate);
 //        build();
 //        invalidate();
@@ -264,12 +273,12 @@ public class TrackTextView extends TextView implements View.OnClickListener {
         tt.show();
     }
 
-    public static void sendRefreshWidget(Context ctx) {
-        Intent intent = new Intent(ctx, TrackWidget.class);
+    public void sendRefreshWidget() {
+        Intent intent = new Intent(context, TrackWidget.class);
         intent.setAction(TrackWidget.ACTION_REFRESH);
-        ctx.sendBroadcast(intent);
-        LocalBroadcastManager.getInstance(ctx).sendBroadcast(intent);
-        TrackAlarmReceiver.sendActionOverAlarm(ctx, 5000, false);
+        context.sendBroadcast(intent);
+        TrackAlarmReceiver.sendActionOverAlarm(context, 5000, false);
+        listener.onChanged();
     }
 
     @Override
@@ -286,9 +295,10 @@ public class TrackTextView extends TextView implements View.OnClickListener {
                     .putInt(PREF_SELYEAR, eventYear)
                     .putInt(PREF_SELDAY, eventDay)
                     .apply();
-            Intent intent = new Intent(context, TrackWidget.class);
-            intent.setAction(TrackWidget.ACTION_REFRESH);
-            LocalBroadcastManager.getInstance(context).sendBroadcast(intent);
+//            Intent intent = new Intent(context, TrackWidget.class);
+//            intent.setAction(TrackWidget.ACTION_REFRESH);
+//            LocalBroadcastManager.getInstance(context).sendBroadcast(intent);
+            listener.onChanged();
         }
         else {
             if (eventType == 1) {

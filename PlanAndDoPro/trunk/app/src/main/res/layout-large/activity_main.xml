@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  ~ Copyright (c) Roman Tsovanyan
+  -->
+<LinearLayout
+    xmlns:tools="http://schemas.android.com/tools"
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context="pro.tsov.plananddopro.MainActivity"
+    android:orientation="horizontal"
+    android:weightSum="3">
+
+    <fragment
+        android:layout_width="0dp"
+        android:layout_height="match_parent"
+        android:name="pro.tsov.plananddopro.EventListFragment"
+        android:id="@+id/eventsFragment"
+        tools:layout="@layout/event_list"
+        android:layout_weight="1"
+        android:layout_marginRight="@dimen/activity_horizontal_margin" />
+
+    <fragment
+        android:layout_width="0dp"
+        android:layout_height="match_parent"
+        android:name="pro.tsov.plananddopro.TrackEventFragment"
+        android:id="@+id/tracksFragment"
+        tools:layout="@layout/track_event"
+        android:layout_weight="2" />
+
+</LinearLayout>

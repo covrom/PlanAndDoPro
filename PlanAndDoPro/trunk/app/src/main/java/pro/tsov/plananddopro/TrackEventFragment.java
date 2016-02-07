@@ -4,24 +4,24 @@
 
 package pro.tsov.plananddopro;
 
-import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
-import android.content.IntentFilter;
 import android.content.SharedPreferences;
 import android.graphics.Typeface;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
+import android.support.annotation.Nullable;
 import android.support.design.widget.FloatingActionButton;
+import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentActivity;
 import android.support.v4.content.ContextCompat;
-import android.support.v4.content.LocalBroadcastManager;
-import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.text.format.DateFormat;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import java.text.DateFormatSymbols;
@@ -30,35 +30,72 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.Locale;
 
-public class TrackEventFragment extends AppCompatActivity implements View.OnClickListener {
+public class TrackEventFragment extends Fragment implements View.OnClickListener, TrackTextView.TrackTextViewListener {
 
     public long currentRowId;
     public Date currentDay;
-    private TrackRec trackrec;
+
+    public static final String PREF_ROWID = "pro.tsov.plananddopro.trackactivityrowid";
     private static final String PREF_MONTH = "pro.tsov.plananddopro.trackactivitymonth";
     private static final String PREF_YEAR = "pro.tsov.plananddopro.trackactivityyear";
+    private RelativeLayout llLayout;
+    private TrackEventFragmentListener listener;
 
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
+    public void onChanged() {
+        //todo переделать на обновление views
+        refreshFromDB();
+    }
 
-        if (savedInstanceState != null) return;
+    public interface TrackEventFragmentListener {
+        public void onEditEvent(long rowID);
+    }
 
-        setContentView(R.layout.activity_track_event);
+    @Override
+    public void onAttach(Context context) {
+        super.onAttach(context);
+        listener = (TrackEventFragmentListener) context;
+    }
 
-        Toolbar toolbar = (Toolbar) findViewById(R.id.main_toolbar);
+    @Override
+    public void onDetach() {
+        super.onDetach();
+        listener = null;
+    }
+
+
+    @Nullable
+    @Override
+    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+
+        super.onCreateView(inflater,container,savedInstanceState);
+
+        setRetainInstance(true);
+
+        currentRowId = -1;
+        if (savedInstanceState!=null){
+            currentRowId = savedInstanceState.getLong(PREF_ROWID);
+        }else{
+            Bundle args = getArguments();
+            if (args!=null) currentRowId = args.getLong(PREF_ROWID);
+        }
+
+        FragmentActivity faActivity = (FragmentActivity) super.getActivity();
+        llLayout = (RelativeLayout) inflater.inflate(R.layout.track_event, container, false);
+
+        Toolbar toolbar = (Toolbar) llLayout.findViewById(R.id.main_toolbar);
         toolbar.setTitle("");
 
-        FloatingActionButton editFAB = (FloatingActionButton) findViewById(R.id.editFAB);
-        editFAB.setRippleColor(ContextCompat.getColor(this, R.color.colorAccentBright));
+        FloatingActionButton editFAB = (FloatingActionButton) llLayout.findViewById(R.id.editFAB);
+        editFAB.setRippleColor(ContextCompat.getColor(faActivity, R.color.colorAccentBright));
         editFAB.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
                 editEvent();
             }
         });
 
-        FloatingActionButton sendFAB = (FloatingActionButton) findViewById(R.id.sendFAB);
-        sendFAB.setRippleColor(ContextCompat.getColor(this, R.color.colorAccentBright));
+        FloatingActionButton sendFAB = (FloatingActionButton) llLayout.findViewById(R.id.sendFAB);
+        sendFAB.setRippleColor(ContextCompat.getColor(faActivity, R.color.colorAccentBright));
         sendFAB.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
                 sendEvent();
@@ -67,52 +104,51 @@ public class TrackEventFragment extends AppCompatActivity implements View.OnClic
 
         currentDay = Calendar.getInstance().getTime();
 
-        Button btnPrev = (Button) findViewById(R.id.prev_month_button);
+        Button btnPrev = (Button) llLayout.findViewById(R.id.prev_month_button);
         btnPrev.setTypeface(Typeface.createFromAsset(getResources().getAssets(), "fontawesome-webfont.ttf"));
         btnPrev.setOnClickListener(this);
 
-        Button btnNext = (Button) findViewById(R.id.next_month_button);
+        Button btnNext = (Button) llLayout.findViewById(R.id.next_month_button);
         btnNext.setTypeface(Typeface.createFromAsset(getResources().getAssets(), "fontawesome-webfont.ttf"));
         btnNext.setOnClickListener(this);
 
-        Button btnTitl = (Button) findViewById(R.id.month_label);
+        Button btnTitl = (Button) llLayout.findViewById(R.id.month_label);
         btnTitl.setText(new SimpleDateFormat("MMMM yyyy", Locale.getDefault()).format(currentDay));
         btnTitl.setOnClickListener(this);
 
-        Intent i = getIntent();
-        currentRowId = i.getLongExtra(EditEventActivity.ACTION_EXTRA_EVENTID, -1);
-        trackrec = new TrackRec(currentRowId);
+//        Intent i = faActivity.getIntent();
+//        currentRowId = i.getLongExtra(EditEventActivity.ACTION_EXTRA_EVENTID, -1);
+
         refreshFromDB();
 
-        LocalBroadcastManager bManager = LocalBroadcastManager.getInstance(this);
-        IntentFilter intentFilter = new IntentFilter();
-        intentFilter.addAction(TrackWidget.ACTION_REFRESH);
-        bManager.registerReceiver(bReceiver, intentFilter);
+        return llLayout;
+    }
 
+    @Override
+    public void onResume() {
+        super.onResume();
+        refreshFromDB();
+    }
+
+    @Override
+    public void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+        outState.putLong(PREF_ROWID,currentRowId);
     }
 
 
-    private BroadcastReceiver bReceiver = new BroadcastReceiver() {
-
-        @Override
-        public void onReceive(Context context, Intent intent) {
-            if (intent.getAction().equals(TrackWidget.ACTION_REFRESH)) {
-                refreshFromDB();
-            }
-        }
-    };
-
     private void editEvent(){
-        Intent i = new Intent(this, EditEventActivity.class);
-        i.putExtra(EditEventActivity.ACTION_EXTRA_EVENTID, currentRowId);//новый
-        startActivityForResult(i, 2);
+        listener.onEditEvent(currentRowId);
+//        Intent i = new Intent(super.getActivity(), EditEventActivity.class);
+//        i.putExtra(EditEventActivity.ACTION_EXTRA_EVENTID, currentRowId);//новый
+//        startActivityForResult(i, 2);
     }
 
     private void sendEvent() {
         TrackRec tr = new TrackRec(currentRowId);
         Intent sendIntent = new Intent();
         sendIntent.setAction(Intent.ACTION_SEND);
-        sendIntent.putExtra(Intent.EXTRA_TEXT, tr.getTabbedText(PlanDoDBOpenHelper.getInstance(this)));
+        sendIntent.putExtra(Intent.EXTRA_TEXT, tr.getTabbedText(PlanDoDBOpenHelper.getInstance(super.getActivity())));
         sendIntent.setType("text/plain");
         startActivity(sendIntent);
     }
@@ -126,7 +162,7 @@ public class TrackEventFragment extends AppCompatActivity implements View.OnClic
     }
 
     private void prevMonth(){
-        SharedPreferences sp = PreferenceManager.getDefaultSharedPreferences(this);
+        SharedPreferences sp = PreferenceManager.getDefaultSharedPreferences(super.getActivity());
         Calendar cal = Calendar.getInstance();
         int thisMonth = sp.getInt(PREF_MONTH, cal.get(Calendar.MONTH));
         int thisYear = sp.getInt(PREF_YEAR, cal.get(Calendar.YEAR));
@@ -142,7 +178,7 @@ public class TrackEventFragment extends AppCompatActivity implements View.OnClic
     }
 
     private void nextMonth() {
-        SharedPreferences sp = PreferenceManager.getDefaultSharedPreferences(this);
+        SharedPreferences sp = PreferenceManager.getDefaultSharedPreferences(super.getActivity());
         Calendar cal = Calendar.getInstance();
         int thisMonth = sp.getInt(PREF_MONTH, cal.get(Calendar.MONTH));
         int thisYear = sp.getInt(PREF_YEAR, cal.get(Calendar.YEAR));
@@ -158,7 +194,7 @@ public class TrackEventFragment extends AppCompatActivity implements View.OnClic
     }
 
     private void resetMonth() {
-        SharedPreferences sp = PreferenceManager.getDefaultSharedPreferences(this);
+        SharedPreferences sp = PreferenceManager.getDefaultSharedPreferences(super.getActivity());
         sp.edit().remove(PREF_MONTH).remove(PREF_YEAR).apply();
         refreshFromDB();
     }
@@ -166,17 +202,17 @@ public class TrackEventFragment extends AppCompatActivity implements View.OnClic
     public void refreshFromDB(){
         if (currentRowId != -1) {
             //считываем из базы
-            PlanDoDBOpenHelper helper = PlanDoDBOpenHelper.getInstance(this);
+            PlanDoDBOpenHelper helper = PlanDoDBOpenHelper.getInstance(super.getActivity());
             EventRec rec = helper.getEventData(currentRowId);
             if (rec != null) {
 
                 ////////////////////////////////////////////
-                ((TextView) findViewById(R.id.textViewName)).setText(rec.name);
-                ((TextView) findViewById(R.id.textViewDesc)).setText(rec.describe);
+                ((TextView) llLayout.findViewById(R.id.textViewName)).setText(rec.name);
+                ((TextView) llLayout.findViewById(R.id.textViewDesc)).setText(rec.describe);
                 if (rec.icon.equals("--")) {
-                    ((TextView) findViewById(R.id.textViewIcon)).setText("    ");
+                    ((TextView) llLayout.findViewById(R.id.textViewIcon)).setText("    ");
                 } else {
-                    TextView v = ((TextView) findViewById(R.id.textViewIcon));
+                    TextView v = ((TextView) llLayout.findViewById(R.id.textViewIcon));
                     v.setText(rec.icon);
                     v.setTypeface(Typeface.createFromAsset(getResources().getAssets(), "flaticon.ttf"));
                 }
@@ -189,19 +225,20 @@ public class TrackEventFragment extends AppCompatActivity implements View.OnClic
 
 
     @Override
-    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
         if (requestCode==2) refreshFromDB();
     }
 
     public void refreshDecorators(){
 
-        PlanDoDBOpenHelper db = PlanDoDBOpenHelper.getInstance(this);
+        PlanDoDBOpenHelper db = PlanDoDBOpenHelper.getInstance(super.getActivity());
+        TrackRec trackrec = new TrackRec(currentRowId);
         db.readTrackToRec(trackrec);
 
         int numWeeks = 6;
-        SharedPreferences sp = PreferenceManager.getDefaultSharedPreferences(this);
-        ViewGroup rv = (ViewGroup) findViewById(R.id.calendar);
+        SharedPreferences sp = PreferenceManager.getDefaultSharedPreferences(super.getActivity());
+        ViewGroup rv = (ViewGroup) llLayout.findViewById(R.id.calendar);
 
         Calendar cal = Calendar.getInstance();
         int thisMonth = sp.getInt(PREF_MONTH, cal.get(Calendar.MONTH));
@@ -210,7 +247,7 @@ public class TrackEventFragment extends AppCompatActivity implements View.OnClic
         cal.set(Calendar.MONTH, thisMonth);
         cal.set(Calendar.YEAR, thisYear);
 
-        ((Button) findViewById(R.id.month_label)).setText(DateFormat.format("MMMM yyyy", cal));
+        ((Button) llLayout.findViewById(R.id.month_label)).setText(DateFormat.format("MMMM yyyy", cal));
 
         cal.set(Calendar.DAY_OF_MONTH, 1);
         int monthStartDayOfWeek = cal.get(Calendar.DAY_OF_WEEK);
@@ -220,19 +257,19 @@ public class TrackEventFragment extends AppCompatActivity implements View.OnClic
 
         rv.removeAllViews();
 
-        LayoutInflater inflater = (LayoutInflater) getBaseContext().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+        LayoutInflater inflater = (LayoutInflater) super.getActivity().getBaseContext().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
 
-        View headerRowRv = inflater.inflate(R.layout.activity_track_row_header,null);
+        View headerRowRv = inflater.inflate(R.layout.cal_track_row_header,null);
 
         DateFormatSymbols dfs = DateFormatSymbols.getInstance();
         String[] weekdays = dfs.getShortWeekdays();
         for (int day = Calendar.MONDAY; day <= Calendar.SATURDAY; day++) {
-            View atCellHeader = inflater.inflate(R.layout.activity_track_cell_header, (ViewGroup) headerRowRv,false);
+            View atCellHeader = inflater.inflate(R.layout.cal_track_cell_header, (ViewGroup) headerRowRv,false);
             TextView dayRv = (TextView) atCellHeader.findViewById(R.id.at_cell_header);
             dayRv.setText(weekdays[day]);
             ((ViewGroup)headerRowRv).addView(atCellHeader);
         }
-        View atCellHeader = inflater.inflate(R.layout.activity_track_cell_header, (ViewGroup) headerRowRv, false);
+        View atCellHeader = inflater.inflate(R.layout.cal_track_cell_header, (ViewGroup) headerRowRv, false);
         TextView dayRv = (TextView) atCellHeader.findViewById(R.id.at_cell_header);
         dayRv.setText(weekdays[Calendar.SUNDAY]);
         ((ViewGroup) headerRowRv).addView(atCellHeader);
@@ -247,7 +284,7 @@ public class TrackEventFragment extends AppCompatActivity implements View.OnClic
             boolean lastIs2 = beforeEt == 2;
             boolean nextIs2;
 
-            View rowRv = inflater.inflate(R.layout.activity_track_row_week, null);
+            View rowRv = inflater.inflate(R.layout.cal_track_row_week, null);
 
             for (int day = 0; day < 7; day++) {
                 boolean inMonth = cal.get(Calendar.MONTH) == thisMonth;
@@ -268,8 +305,9 @@ public class TrackEventFragment extends AppCompatActivity implements View.OnClic
                     }
                 }
 
-                View cellRv = inflater.inflate(R.layout.activity_track_cell_day,(ViewGroup) rowRv,false);
+                View cellRv = inflater.inflate(R.layout.cal_track_cell_day,(ViewGroup) rowRv,false);
                 TrackTextView atDay = (TrackTextView) cellRv.findViewById(R.id.at_day);
+                atDay.setListener(this);
                 atDay.setEventDate(cal.getTime());
                 atDay.setEventType(et[day]);
 

@@ -30,7 +30,7 @@ public class EditEventActivity extends AppCompatActivity implements View.OnClick
 
         if (savedInstanceState != null) return;
 
-        setContentView(R.layout.activity_edit_event);
+        setContentView(R.layout.edit_event);
 
         ArrayAdapter<String> adapter = new ArrayAdapter<>(this, android.R.layout.simple_spinner_item, spindata);
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
