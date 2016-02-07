@@ -45,7 +45,7 @@
             android:paddingRight="8dp"
             android:layout_gravity="center_vertical"
             android:textSize="32sp"
-            android:text="Icon"
+            android:text=""
             android:textIsSelectable="false"
             android:textColor="@color/notifycolor" />
 
@@ -59,14 +59,14 @@
                         android:layout_height="wrap_content"
                         android:textAppearance="?android:attr/textAppearanceLarge"
                         android:id="@+id/textViewName"
-                        android:text="@string/habbitname"
+                        android:text=""
                         android:textColor="@android:color/primary_text_dark" />
 
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:textAppearance="?android:attr/textAppearanceMedium"
-                        android:text="@string/habbitdesc"
+                        android:text=""
                         android:id="@+id/textViewDesc"
                         android:textColor="@android:color/secondary_text_dark" />
         </LinearLayout>
@@ -139,7 +139,7 @@
                     android:fontFamily="sans-serif-condensed"
                     android:gravity="center"
                     android:textSize="16sp"
-                    android:text="month"/>
+                    android:text=""/>
 
                 <Button
                     android:id="@+id/next_month_button"
