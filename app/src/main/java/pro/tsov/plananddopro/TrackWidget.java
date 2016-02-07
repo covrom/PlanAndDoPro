@@ -109,7 +109,7 @@ public class TrackWidget extends AppWidgetProvider {
             boolean inFuture = intent.getBooleanExtra(ACTION_EXTRA_CURRENTINFUTURE, false);
             if (dateISO==null){
                 //открываем трекер события
-                Intent i = new Intent(context,TrackEventFragment.class);
+                Intent i = new Intent(context,MainActivity.class);
                 i.putExtra(EditEventActivity.ACTION_EXTRA_EVENTID, eventId);
                 i.setFlags (Intent.FLAG_ACTIVITY_NEW_TASK);
                 context.startActivity(i);
