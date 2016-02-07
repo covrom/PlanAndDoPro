@@ -14,8 +14,10 @@ import android.support.v7.app.AppCompatActivity;
 public class MainActivity extends AppCompatActivity implements EventListFragment.EventListFragmentListener,TrackEventFragment.TrackEventFragmentListener {
 
     EventListFragment evList;
+    TrackEventFragment trackEv;
     long startWithRowId=-1;
-    public static final String PREF_ROWID = "pro.tsov.plananddopro.activityrowid";
+    private final String FRAG_TAG_EVENTS = "eventsfragmenttag";
+    private final String FRAG_TAG_TRACKS = "tracksfragmenttag";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -23,89 +25,81 @@ public class MainActivity extends AppCompatActivity implements EventListFragment
 
         setContentView(R.layout.activity_main);
 
-        //if (savedInstanceState != null) return;
+        boolean isPortrait = findViewById(R.id.tracksFragment) == null;
 
-        if (findViewById(R.id.singleFragment)!=null){
-            evList = new EventListFragment();
+        if (savedInstanceState != null) {
+            evList = (EventListFragment) getSupportFragmentManager().findFragmentByTag(FRAG_TAG_EVENTS);
+            trackEv = (TrackEventFragment) getSupportFragmentManager().findFragmentByTag(FRAG_TAG_TRACKS);
+        }
+        if (evList==null) evList = new EventListFragment();
+        if (trackEv == null) trackEv = new TrackEventFragment();
+
+        if (!evList.isInLayout()) {
             FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
-            transaction.add(R.id.singleFragment,evList);
+            transaction.replace(R.id.eventsFragment, evList, FRAG_TAG_EVENTS);
             transaction.commit();
+        }
+        if (!isPortrait){
+            if (!trackEv.isInLayout()) {
+                FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
+                transaction.replace(R.id.tracksFragment, trackEv, FRAG_TAG_TRACKS);
+                transaction.commit();
+            }
         }
 
         Intent i = getIntent();
         long startWithRowId = i.getLongExtra(EditEventActivity.ACTION_EXTRA_EVENTID, -1);
 
-        if (savedInstanceState!=null && startWithRowId==-1){
-//            startWithRowId = savedInstanceState.getLong(PREF_ROWID);
+        if(startWithRowId!=-1){
+            onEventSelected(startWithRowId);
         }
 
-        if(startWithRowId!=-1){onEventSelected(startWithRowId);}
+    }
 
-//        TrackAlarmReceiver.sendActionOverAlarm(this,5000,false);
+    @Override
+    protected void onStop() {
+        super.onStop();
 
     }
 
     @Override
     public void onSaveInstanceState(Bundle outState, PersistableBundle outPersistentState) {
         super.onSaveInstanceState(outState, outPersistentState);
-        outState.putLong(PREF_ROWID,startWithRowId);
-    }
-
-    @Override
-    protected void onResume() {
-        super.onResume();
-        if (evList==null){
-            evList = (EventListFragment) getSupportFragmentManager().findFragmentById(R.id.singleFragment);
-        }
     }
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
         if (requestCode==1) {
-            if (findViewById(R.id.singleFragment) != null) {
-                evList.forceLoad();
-            }
-            else{
-                ((EventListFragment) getSupportFragmentManager().findFragmentById(R.id.eventsFragment)).forceLoad();
-            }
-            if (data!=null) {
+            if (data != null) {
                 long evId = data.getLongExtra(EditEventActivity.ACTION_EXTRA_EVENTID, -1);
                 onEventSelected(evId);
             }
+            evList.forceLoad();
         };
     }
 
     @Override
     public void onEventSelected(long rowID) {
         startWithRowId = rowID;
-        if (findViewById(R.id.singleFragment)!=null){
-            displayTrack(rowID,R.id.singleFragment);
+        if (findViewById(R.id.tracksFragment)==null){
+            displayTrack(rowID, R.id.tracksFragment,true, FRAG_TAG_TRACKS);
         }
         else{
-            //планшет
-
-//            Fragment fragment = getSupportFragmentManager().findFragmentById(R.id.tracksFragment);
-//            if (fragment != null)
-//                getSupportFragmentManager().beginTransaction().remove(fragment).commit();
-
-            getSupportFragmentManager().popBackStack();
-            displayTrack(rowID,R.id.tracksFragment);
+            //land
+            displayTrack(rowID,R.id.tracksFragment,false,FRAG_TAG_TRACKS);
         }
-//        Intent i = new Intent(faActivity, TrackEventFragment.class);
-//        i.putExtra(EditEventActivity.ACTION_EXTRA_EVENTID, id);
-//        startActivityForResult(i, 1);
 
     }
 
-    private void displayTrack(long rowID, int viewID) {
-        TrackEventFragment trFragment = new TrackEventFragment();
+    private void displayTrack(long rowID, int viewID, boolean putBackStack, String frTag) {
+        trackEv = new TrackEventFragment();
         Bundle args = new Bundle();
         args.putLong(TrackEventFragment.PREF_ROWID, rowID);
-        trFragment.setArguments(args);
+        trackEv.setArguments(args);
         FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
-        transaction.replace(viewID,trFragment);
-        transaction.addToBackStack(null);
+        transaction.replace(viewID, trackEv, frTag);
+        if(putBackStack) transaction.addToBackStack(null);
         transaction.commit();
     }
 
