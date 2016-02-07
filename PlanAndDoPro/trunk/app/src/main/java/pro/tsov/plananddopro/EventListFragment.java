@@ -10,7 +10,6 @@ import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.content.Loader;
-import android.support.v7.widget.Toolbar;
 import android.view.ContextMenu;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
@@ -95,7 +94,7 @@ public class EventListFragment extends Fragment implements LoaderManager.LoaderC
 
         llLayout = (RelativeLayout) inflater.inflate(R.layout.event_list, container, false);
 
-        Toolbar toolbar = (Toolbar) llLayout.findViewById(R.id.main_toolbar);
+//        Toolbar toolbar = (Toolbar) llLayout.findViewById(R.id.main_toolbar);
 
         FloatingActionButton mainFab = (FloatingActionButton) llLayout.findViewById(R.id.mainFAB);
         mainFab.setRippleColor(ContextCompat.getColor(faActivity, R.color.colorAccentBright));
