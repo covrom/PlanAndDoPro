@@ -30,7 +30,7 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.Locale;
 
-public class TrackEventActivity extends AppCompatActivity implements View.OnClickListener {
+public class TrackEventFragment extends AppCompatActivity implements View.OnClickListener {
 
     public long currentRowId;
     public Date currentDay;

@@ -62,7 +62,7 @@ public class TrackAlarmService extends IntentService {
                         cal.set(Calendar.SECOND, 0);
                         cal.set(Calendar.MILLISECOND, 0);
 
-                        Intent notificationIntent = new Intent(this, TrackEventActivity.class);
+                        Intent notificationIntent = new Intent(this, TrackEventFragment.class);
                         notificationIntent.putExtra(EditEventActivity.ACTION_EXTRA_EVENTID, eventId);
                         //notificationIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
 

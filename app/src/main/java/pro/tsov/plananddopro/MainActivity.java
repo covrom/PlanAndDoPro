@@ -182,7 +182,7 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
 
     @Override
     public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-        Intent i = new Intent(MainActivity.this,TrackEventActivity.class);
+        Intent i = new Intent(MainActivity.this,TrackEventFragment.class);
         i.putExtra(EditEventActivity.ACTION_EXTRA_EVENTID, id);
         startActivityForResult(i,1);
     }
