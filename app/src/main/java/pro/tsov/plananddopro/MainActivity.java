@@ -6,6 +6,7 @@ package pro.tsov.plananddopro;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.os.PersistableBundle;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AppCompatActivity;
 
@@ -13,6 +14,8 @@ import android.support.v7.app.AppCompatActivity;
 public class MainActivity extends AppCompatActivity implements EventListFragment.EventListFragmentListener,TrackEventFragment.TrackEventFragmentListener {
 
     EventListFragment evList;
+    long startWithRowId=-1;
+    public static final String PREF_ROWID = "pro.tsov.plananddopro.activityrowid";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -31,10 +34,21 @@ public class MainActivity extends AppCompatActivity implements EventListFragment
 
         Intent i = getIntent();
         long startWithRowId = i.getLongExtra(EditEventActivity.ACTION_EXTRA_EVENTID, -1);
+
+        if (savedInstanceState!=null && startWithRowId==-1){
+//            startWithRowId = savedInstanceState.getLong(PREF_ROWID);
+        }
+
         if(startWithRowId!=-1){onEventSelected(startWithRowId);}
 
 //        TrackAlarmReceiver.sendActionOverAlarm(this,5000,false);
 
+    }
+
+    @Override
+    public void onSaveInstanceState(Bundle outState, PersistableBundle outPersistentState) {
+        super.onSaveInstanceState(outState, outPersistentState);
+        outState.putLong(PREF_ROWID,startWithRowId);
     }
 
     @Override
@@ -64,6 +78,7 @@ public class MainActivity extends AppCompatActivity implements EventListFragment
 
     @Override
     public void onEventSelected(long rowID) {
+        startWithRowId = rowID;
         if (findViewById(R.id.singleFragment)!=null){
             displayTrack(rowID,R.id.singleFragment);
         }
