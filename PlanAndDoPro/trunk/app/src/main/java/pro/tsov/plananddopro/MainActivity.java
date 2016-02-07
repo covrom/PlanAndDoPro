@@ -69,6 +69,11 @@ public class MainActivity extends AppCompatActivity implements EventListFragment
         }
         else{
             //планшет
+
+//            Fragment fragment = getSupportFragmentManager().findFragmentById(R.id.tracksFragment);
+//            if (fragment != null)
+//                getSupportFragmentManager().beginTransaction().remove(fragment).commit();
+
             getSupportFragmentManager().popBackStack();
             displayTrack(rowID,R.id.tracksFragment);
         }

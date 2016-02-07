@@ -63,6 +63,11 @@ public class TrackEventFragment extends Fragment implements View.OnClickListener
         listener = null;
     }
 
+    @Override
+    public void onCreate(@Nullable Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        currentDay = Calendar.getInstance().getTime();
+    }
 
     @Nullable
     @Override
@@ -82,10 +87,7 @@ public class TrackEventFragment extends Fragment implements View.OnClickListener
 
         FragmentActivity faActivity = (FragmentActivity) super.getActivity();
 
-        llLayout = (currentRowId == -1)? (RelativeLayout) inflater.inflate(R.layout.track_event_empty, container, false):(RelativeLayout) inflater.inflate(R.layout.track_event, container, false);
-
-//        if (currentRowId==-1) llLayout.findViewById(R.id.fullLayout).setVisibility(View.INVISIBLE);
-//        else llLayout.findViewById(R.id.fullLayout).setVisibility(View.VISIBLE);
+        llLayout = (RelativeLayout) inflater.inflate(R.layout.track_event, container, false);
 
         Toolbar toolbar = (Toolbar) llLayout.findViewById(R.id.main_toolbar);
         toolbar.setTitle("");
@@ -106,8 +108,6 @@ public class TrackEventFragment extends Fragment implements View.OnClickListener
             }
         });
 
-        currentDay = Calendar.getInstance().getTime();
-
         Button btnPrev = (Button) llLayout.findViewById(R.id.prev_month_button);
         btnPrev.setTypeface(Typeface.createFromAsset(getResources().getAssets(), "fontawesome-webfont.ttf"));
         btnPrev.setOnClickListener(this);
@@ -119,9 +119,6 @@ public class TrackEventFragment extends Fragment implements View.OnClickListener
         Button btnTitl = (Button) llLayout.findViewById(R.id.month_label);
         btnTitl.setText(new SimpleDateFormat("MMMM yyyy", Locale.getDefault()).format(currentDay));
         btnTitl.setOnClickListener(this);
-
-//        Intent i = faActivity.getIntent();
-//        currentRowId = i.getLongExtra(EditEventActivity.ACTION_EXTRA_EVENTID, -1);
 
         refreshFromDB();
 
@@ -142,6 +139,7 @@ public class TrackEventFragment extends Fragment implements View.OnClickListener
 
 
     private void editEvent(){
+        if (currentRowId==-1) return;
         listener.onEditEvent(currentRowId);
 //        Intent i = new Intent(super.getActivity(), EditEventActivity.class);
 //        i.putExtra(EditEventActivity.ACTION_EXTRA_EVENTID, currentRowId);//новый
@@ -149,6 +147,7 @@ public class TrackEventFragment extends Fragment implements View.OnClickListener
     }
 
     private void sendEvent() {
+        if (currentRowId==-1) return;
         TrackRec tr = new TrackRec(currentRowId);
         Intent sendIntent = new Intent();
         sendIntent.setAction(Intent.ACTION_SEND);

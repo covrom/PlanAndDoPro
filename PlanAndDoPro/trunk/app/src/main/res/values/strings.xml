@@ -30,6 +30,7 @@
     <string name="send">Send</string>
     <string name="mainListNoData">Empty list</string>
     <string name="addFirstEvent">Add first event</string>
+    <string name="eventnotsel">Event not selected</string>
 
 
 </resources>
