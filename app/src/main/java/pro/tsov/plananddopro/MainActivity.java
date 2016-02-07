@@ -20,7 +20,7 @@ public class MainActivity extends AppCompatActivity implements EventListFragment
 
         setContentView(R.layout.activity_main);
 
-        if (savedInstanceState != null) return;
+        //if (savedInstanceState != null) return;
 
         if (findViewById(R.id.singleFragment)!=null){
             evList = new EventListFragment();
@@ -42,14 +42,24 @@ public class MainActivity extends AppCompatActivity implements EventListFragment
         super.onResume();
         if (evList==null){
             evList = (EventListFragment) getSupportFragmentManager().findFragmentById(R.id.singleFragment);
-
         }
     }
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-        if (requestCode==1) getLoaderManager().getLoader(0).forceLoad();
+        if (requestCode==1) {
+            if (findViewById(R.id.singleFragment) != null) {
+                evList.forceLoad();
+            }
+            else{
+                ((EventListFragment) getSupportFragmentManager().findFragmentById(R.id.eventsFragment)).forceLoad();
+            }
+            if (data!=null) {
+                long evId = data.getLongExtra(EditEventActivity.ACTION_EXTRA_EVENTID, -1);
+                onEventSelected(evId);
+            }
+        };
     }
 
     @Override

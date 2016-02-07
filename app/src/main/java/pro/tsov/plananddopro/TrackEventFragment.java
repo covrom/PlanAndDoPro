@@ -68,9 +68,9 @@ public class TrackEventFragment extends Fragment implements View.OnClickListener
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 
-        super.onCreateView(inflater,container,savedInstanceState);
+        super.onCreateView(inflater, container, savedInstanceState);
 
-        setRetainInstance(true);
+//        setRetainInstance(true);
 
         currentRowId = -1;
         if (savedInstanceState!=null){
@@ -81,7 +81,11 @@ public class TrackEventFragment extends Fragment implements View.OnClickListener
         }
 
         FragmentActivity faActivity = (FragmentActivity) super.getActivity();
-        llLayout = (RelativeLayout) inflater.inflate(R.layout.track_event, container, false);
+
+        llLayout = (currentRowId == -1)? (RelativeLayout) inflater.inflate(R.layout.track_event_empty, container, false):(RelativeLayout) inflater.inflate(R.layout.track_event, container, false);
+
+//        if (currentRowId==-1) llLayout.findViewById(R.id.fullLayout).setVisibility(View.INVISIBLE);
+//        else llLayout.findViewById(R.id.fullLayout).setVisibility(View.VISIBLE);
 
         Toolbar toolbar = (Toolbar) llLayout.findViewById(R.id.main_toolbar);
         toolbar.setTitle("");

@@ -1,16 +1,15 @@
 package pro.tsov.plananddopro;
 
-import android.app.LoaderManager;
 import android.content.Context;
-import android.content.CursorLoader;
-import android.content.Loader;
 import android.database.Cursor;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
+import android.support.v4.app.LoaderManager;
 import android.support.v4.content.ContextCompat;
+import android.support.v4.content.Loader;
 import android.support.v7.widget.Toolbar;
 import android.view.ContextMenu;
 import android.view.LayoutInflater;
@@ -31,9 +30,9 @@ public class EventListFragment extends Fragment implements LoaderManager.LoaderC
     private RelativeLayout llLayout;
 
     public interface EventListFragmentListener{
-        public void onEventSelected(long rowID);
-        public void onAddEvent();
-        public void onEditEvent(long rowID);
+        void onEventSelected(long rowID);
+        void onAddEvent();
+        void onEditEvent(long rowID);
     }
 
     private EventListFragmentListener listener;
@@ -54,7 +53,7 @@ public class EventListFragment extends Fragment implements LoaderManager.LoaderC
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        faActivity = (FragmentActivity) super.getActivity();
+        faActivity = super.getActivity();
 
         dbhelper = PlanDoDBOpenHelper.getInstance(faActivity);
         // формируем столбцы сопоставления
@@ -66,7 +65,7 @@ public class EventListFragment extends Fragment implements LoaderManager.LoaderC
         scAdapter.setViewBinder(new MainListViewBinder(faActivity));
 
         // создаем лоадер для чтения данных
-        LoaderManager lm = faActivity.getLoaderManager();
+        LoaderManager lm = getLoaderManager();
         lm.initLoader(0, null, this);
 
     }
@@ -80,7 +79,12 @@ public class EventListFragment extends Fragment implements LoaderManager.LoaderC
     @Override
     public void onResume() {
         super.onResume();
-        faActivity.getLoaderManager().getLoader(0).forceLoad();
+        forceLoad();
+    }
+
+    public void forceLoad(){
+        Loader ldr = getLoaderManager().getLoader(0);
+        if (ldr!=null) ldr.forceLoad();
     }
 
     @Nullable
@@ -126,7 +130,7 @@ public class EventListFragment extends Fragment implements LoaderManager.LoaderC
     @Override
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-        setRetainInstance(true);
+        //setRetainInstance(true);
     }
 
     @Override
@@ -149,7 +153,7 @@ public class EventListFragment extends Fragment implements LoaderManager.LoaderC
             dbhelper.delEventRec(acmi.id);
             EditEventActivity.sendRefreshWidget(faActivity);
             // получаем новый курсор с данными
-            getLoaderManager().getLoader(0).forceLoad();
+            forceLoad();
             return true;
         }
         return super.onContextItemSelected(item);
@@ -161,17 +165,17 @@ public class EventListFragment extends Fragment implements LoaderManager.LoaderC
     }
 
     @Override
-    public Loader<Cursor> onCreateLoader(int id, Bundle args) {
+    public android.support.v4.content.Loader<Cursor> onCreateLoader(int id, Bundle args) {
         return new MyCursorLoader(faActivity, dbhelper);
     }
 
     @Override
-    public void onLoadFinished(Loader<Cursor> loader, Cursor data) {
+    public void onLoadFinished(android.support.v4.content.Loader<Cursor> loader, Cursor data) {
         scAdapter.swapCursor(data);
     }
 
     @Override
-    public void onLoaderReset(Loader<Cursor> loader) {
+    public void onLoaderReset(android.support.v4.content.Loader<Cursor> loader) {
 
     }
 
@@ -180,7 +184,7 @@ public class EventListFragment extends Fragment implements LoaderManager.LoaderC
         listener.onEventSelected(id);
     }
 
-    static class MyCursorLoader extends CursorLoader {
+    static class MyCursorLoader extends android.support.v4.content.CursorLoader {
 
         PlanDoDBOpenHelper db;
 
