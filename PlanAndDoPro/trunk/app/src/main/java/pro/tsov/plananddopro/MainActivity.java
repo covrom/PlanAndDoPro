@@ -7,6 +7,7 @@ package pro.tsov.plananddopro;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.PersistableBundle;
+import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AppCompatActivity;
 
@@ -35,6 +36,7 @@ public class MainActivity extends AppCompatActivity implements EventListFragment
         if (trackEv == null) trackEv = new TrackEventFragment();
 
         if (!evList.isInLayout()) {
+            getSupportFragmentManager().popBackStack(null, FragmentManager.POP_BACK_STACK_INCLUSIVE);//чтобы не осталось открытых фрагментов портретного режима
             FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
             transaction.replace(R.id.eventsFragment, evList, FRAG_TAG_EVENTS);
             transaction.commit();
@@ -42,6 +44,8 @@ public class MainActivity extends AppCompatActivity implements EventListFragment
         if (!isPortrait){
             if (!trackEv.isInLayout()) {
                 FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
+                transaction.remove(trackEv);
+                trackEv = new TrackEventFragment();
                 transaction.replace(R.id.tracksFragment, trackEv, FRAG_TAG_TRACKS);
                 transaction.commit();
             }
@@ -83,11 +87,11 @@ public class MainActivity extends AppCompatActivity implements EventListFragment
     public void onEventSelected(long rowID) {
         startWithRowId = rowID;
         if (findViewById(R.id.tracksFragment)==null){
-            displayTrack(rowID, R.id.tracksFragment,true, FRAG_TAG_TRACKS);
+            displayTrack(rowID, R.id.eventsFragment,true, FRAG_TAG_TRACKS);
         }
         else{
             //land
-            displayTrack(rowID,R.id.tracksFragment,false,FRAG_TAG_TRACKS);
+            displayTrack(rowID, R.id.tracksFragment,false,FRAG_TAG_TRACKS);
         }
 
     }
