@@ -42,7 +42,7 @@ public class TrackTextView extends TextView implements View.OnClickListener {
     public static final String PREF_SELYEAR = "pro.tsov.plananddopro.trackactivityselectedyear";
     private TrackTextViewListener listener;
 
-    public interface TrackTextViewListener{ public void onChanged();}
+    public interface TrackTextViewListener{ public void onCalendarElementChanged(TrackTextView trView);}
 
     public TrackTextView(Context context, AttributeSet attrs, int defStyleAttr) {
         super(context, attrs, defStyleAttr);
@@ -95,6 +95,23 @@ public class TrackTextView extends TextView implements View.OnClickListener {
         }
     }
 
+    public int getWeekRow(){
+        //0-5
+        Calendar cal = Calendar.getInstance();
+        cal.setFirstDayOfWeek(Calendar.MONDAY);
+        cal.setTime(this.eventDate);
+        return cal.get(Calendar.WEEK_OF_MONTH)-1;
+    }
+
+    public int getDayColumn() {
+        //0-6
+        Calendar cal = Calendar.getInstance();
+        cal.setTime(this.eventDate);
+        if (cal.get(Calendar.DAY_OF_WEEK) == Calendar.SUNDAY) return 6;
+        else return cal.get(Calendar.DAY_OF_WEEK)-1;
+    }
+
+
     public void setEventType(int eventType) {
         this.eventType = eventType;
     }
@@ -125,7 +142,8 @@ public class TrackTextView extends TextView implements View.OnClickListener {
         int selDay = sp.getInt(PREF_SELDAY, 1);
         isSelected = selYear == eventYear && selDay == eventDay;
 
-        setText(Integer.toString(monthDay));
+        if (enabledState) setText(Integer.toString(monthDay));
+        else setText("");
 
         if (enabledState) {
             Drawable drawable=null;
@@ -278,7 +296,7 @@ public class TrackTextView extends TextView implements View.OnClickListener {
         intent.setAction(TrackWidget.ACTION_REFRESH);
         context.sendBroadcast(intent);
         TrackAlarmReceiver.sendActionOverAlarm(context, 5000, false);
-        listener.onChanged();
+        listener.onCalendarElementChanged(this);
     }
 
     @Override
@@ -298,7 +316,7 @@ public class TrackTextView extends TextView implements View.OnClickListener {
 //            Intent intent = new Intent(context, TrackWidget.class);
 //            intent.setAction(TrackWidget.ACTION_REFRESH);
 //            LocalBroadcastManager.getInstance(context).sendBroadcast(intent);
-            listener.onChanged();
+            listener.onCalendarElementChanged(this);
         }
         else {
             if (eventType == 1) {

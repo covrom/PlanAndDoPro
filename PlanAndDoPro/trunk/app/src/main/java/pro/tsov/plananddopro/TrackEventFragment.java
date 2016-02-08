@@ -24,27 +24,26 @@ import android.widget.Button;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
-import java.text.DateFormatSymbols;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.Locale;
 
-public class TrackEventFragment extends Fragment implements View.OnClickListener, TrackTextView.TrackTextViewListener {
+public class TrackEventFragment extends Fragment implements View.OnClickListener, EventCalendar.EventCalendarListener {
 
     public long currentRowId;
     public Date currentDay;
 
     public static final String PREF_ROWID = "pro.tsov.plananddopro.trackactivityrowid";
-    private static final String PREF_MONTH = "pro.tsov.plananddopro.trackactivitymonth";
-    private static final String PREF_YEAR = "pro.tsov.plananddopro.trackactivityyear";
+    public static final String PREF_MONTH = "pro.tsov.plananddopro.trackactivitymonth";
+    public static final String PREF_YEAR = "pro.tsov.plananddopro.trackactivityyear";
     private RelativeLayout llLayout;
     private TrackEventFragmentListener listener;
 
+
     @Override
-    public void onChanged() {
-        //todo переделать на обновление views
-        refreshFromDB();
+    public void onEventCalendarChanged() {
+        //refreshFromDB();
     }
 
     public interface TrackEventFragmentListener {
@@ -235,13 +234,9 @@ public class TrackEventFragment extends Fragment implements View.OnClickListener
 
     public void refreshDecorators(){
 
-        PlanDoDBOpenHelper db = PlanDoDBOpenHelper.getInstance(super.getActivity());
-        TrackRec trackrec = new TrackRec(currentRowId);
-        db.readTrackToRec(trackrec);
-
-        int numWeeks = 6;
         SharedPreferences sp = PreferenceManager.getDefaultSharedPreferences(super.getActivity());
-        ViewGroup rv = (ViewGroup) llLayout.findViewById(R.id.calendar);
+        EventCalendar rv = (EventCalendar) llLayout.findViewById(R.id.calendar);
+        rv.setListener(this);
 
         Calendar cal = Calendar.getInstance();
         int thisMonth = sp.getInt(PREF_MONTH, cal.get(Calendar.MONTH));
@@ -258,86 +253,9 @@ public class TrackEventFragment extends Fragment implements View.OnClickListener
                 cal.add(Calendar.DAY_OF_MONTH, -6);
             else cal.add(Calendar.DAY_OF_MONTH, 2-monthStartDayOfWeek);
 
-        rv.removeAllViews();
-
-        LayoutInflater inflater = (LayoutInflater) super.getActivity().getBaseContext().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-
-        View headerRowRv = inflater.inflate(R.layout.cal_track_row_header,null);
-
-        DateFormatSymbols dfs = DateFormatSymbols.getInstance();
-        String[] weekdays = dfs.getShortWeekdays();
-        for (int day = Calendar.MONDAY; day <= Calendar.SATURDAY; day++) {
-            View atCellHeader = inflater.inflate(R.layout.cal_track_cell_header, (ViewGroup) headerRowRv,false);
-            TextView dayRv = (TextView) atCellHeader.findViewById(R.id.at_cell_header);
-            dayRv.setText(weekdays[day]);
-            ((ViewGroup)headerRowRv).addView(atCellHeader);
-        }
-        View atCellHeader = inflater.inflate(R.layout.cal_track_cell_header, (ViewGroup) headerRowRv, false);
-        TextView dayRv = (TextView) atCellHeader.findViewById(R.id.at_cell_header);
-        dayRv.setText(weekdays[Calendar.SUNDAY]);
-        ((ViewGroup) headerRowRv).addView(atCellHeader);
-
-        rv.addView(headerRowRv);
-
-        for (int week = 0; week < numWeeks; week++) {
-
-            int[] et = db.readWeekTrackForWidget(currentRowId, cal);
-            int beforeEt = db.readBeforeWeekTrackForWidget(currentRowId, cal);
-            int afterEt = db.readAfterWeekTrackForWidget(currentRowId, cal);
-            boolean lastIs2 = beforeEt == 2;
-            boolean nextIs2;
-
-            View rowRv = inflater.inflate(R.layout.cal_track_row_week, null);
-
-            for (int day = 0; day < 7; day++) {
-                boolean inMonth = cal.get(Calendar.MONTH) == thisMonth;
-
-                //если последний = 2 и ближайший следующий тоже, то цепочка, и не меняем, иначе - не цепочка
-                nextIs2 = false;
-                for (int nextDay = day + 1; nextDay <= 7; nextDay++) {
-                    if (nextDay == 7) {
-                        if (afterEt == 2) {
-                            nextIs2 = true;
-                            break;
-                        }
-                    } else {
-                        if (et[nextDay] == 2) {
-                            nextIs2 = true;
-                        }
-                        if (et[nextDay] != 0) break;
-                    }
-                }
-
-                View cellRv = inflater.inflate(R.layout.cal_track_cell_day,(ViewGroup) rowRv,false);
-                TrackTextView atDay = (TrackTextView) cellRv.findViewById(R.id.at_day);
-                atDay.setListener(this);
-                atDay.setEventDate(cal.getTime());
-                atDay.setEventType(et[day]);
-
-                if (inMonth) {
-                    atDay.setEnabledState(true);
-                    atDay.setLeftConnected(lastIs2);
-                    atDay.setRightConnected(nextIs2);
-                    //atDay.setHasComment(true);
-                    atDay.setCurrentRowId(currentRowId);
-                    atDay.build();
-
-                    if (et[day] == 1) {
-                        lastIs2 = false;
-                    } else if (et[day] == 2) {
-                        lastIs2 = true;
-                    } else if (et[day] == 3) {
-                        lastIs2 = false;
-                    }
-
-                }
-
-                ((ViewGroup)rowRv).addView(cellRv);
-
-                cal.add(Calendar.DAY_OF_MONTH, 1);
-            }
-            rv.addView(rowRv);
-        }
+        rv.setCurrentRowId(currentRowId);
+        rv.build();
+        rv.invalidate();
 
     }
 
