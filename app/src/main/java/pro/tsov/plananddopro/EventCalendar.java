@@ -13,6 +13,7 @@ import android.widget.TextView;
 import java.text.DateFormatSymbols;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Date;
 
 public class EventCalendar extends LinearLayout implements TrackTextView.TrackTextViewListener {
 
@@ -174,5 +175,19 @@ public class EventCalendar extends LinearLayout implements TrackTextView.TrackTe
         }
 
 
+    }
+
+    public Date getSelectedDate(){
+        SharedPreferences sp = PreferenceManager.getDefaultSharedPreferences(context);
+        int selYear = sp.getInt(TrackTextView.PREF_SELYEAR, 2000);
+        int selDay = sp.getInt(TrackTextView.PREF_SELDAY, 1);
+        Calendar cal = Calendar.getInstance();
+        cal.set(Calendar.YEAR,selYear);
+        cal.set(Calendar.DAY_OF_YEAR, selDay);
+        cal.set(Calendar.HOUR_OF_DAY,0);
+        cal.set(Calendar.MINUTE, 0);
+        cal.set(Calendar.SECOND, 0);
+        cal.set(Calendar.MILLISECOND, 0);
+        return cal.getTime();
     }
 }

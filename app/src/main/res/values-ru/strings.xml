@@ -32,4 +32,5 @@
     <string name="mainListNoData">Здесь пока пусто</string>
     <string name="addFirstEvent">Добавить первую задачу</string>
     <string name="eventnotsel">Не выбрана задача</string>
+    <string name="commentstr">Комментарий</string>
 </resources>
