@@ -181,6 +181,9 @@ public class EventCalendar extends LinearLayout implements TrackTextView.TrackTe
         SharedPreferences sp = PreferenceManager.getDefaultSharedPreferences(context);
         int selYear = sp.getInt(TrackTextView.PREF_SELYEAR, 2000);
         int selDay = sp.getInt(TrackTextView.PREF_SELDAY, 1);
+
+        if(selYear==2000&&selDay==1) return null;
+
         Calendar cal = Calendar.getInstance();
         cal.set(Calendar.YEAR,selYear);
         cal.set(Calendar.DAY_OF_YEAR, selDay);

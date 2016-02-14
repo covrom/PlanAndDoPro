@@ -395,17 +395,6 @@ public class PlanDoDBOpenHelper extends SQLiteOpenHelper {
                         Log.e(LOGD_NAME, "Parsing ISO8601 datetime failed", e);
                     }
 
-
-//                    long when = date.getTime();
-//                    int flags = 0;
-//                    flags |= android.text.format.DateUtils.FORMAT_SHOW_TIME;
-//                    flags |= android.text.format.DateUtils.FORMAT_SHOW_DATE;
-//                    flags |= android.text.format.DateUtils.FORMAT_ABBREV_MONTH;
-//                    flags |= android.text.format.DateUtils.FORMAT_SHOW_YEAR;
-//
-//                    String finalDateTime = android.text.format.DateUtils.formatDateTime(context,
-//                            when + TimeZone.getDefault().getOffset(when), flags);
-
                 } while(cursor.moveToNext());
             }
             cursor.close();
@@ -420,7 +409,7 @@ public class PlanDoDBOpenHelper extends SQLiteOpenHelper {
         db.beginTransaction();
         try {
             DateFormat iso8601Format = new SimpleDateFormat("yyyy-MM-dd");
-            db.delete("tracks", "(eventId = " + String.valueOf(eventId)+") and (eventDay = DATE('"+iso8601Format.format(dt)+"'))", null);
+            db.delete("tracks", "(eventId = " + String.valueOf(eventId) + ") and (eventDay = DATE('" + iso8601Format.format(dt) + "'))", null);
             db.setTransactionSuccessful();
         } catch (Exception e) {
             Log.d(LOGD_NAME, "Error while trying to delete track from database");
@@ -429,7 +418,7 @@ public class PlanDoDBOpenHelper extends SQLiteOpenHelper {
         }
     }
 
-    public void updateTrackEventOnDate(long eventId, Date dt, int eventType) {
+    public void updateTrackEventOnDate(long eventId, Date dt, int eventType, String newcomment) {
         SQLiteDatabase db = this.getWritableDatabase();
         db.beginTransaction();
         try {
@@ -440,13 +429,36 @@ public class PlanDoDBOpenHelper extends SQLiteOpenHelper {
             values.put("eventId", eventId);
             values.put("eventDay",iso8601Format.format(dt));
             values.put("eventType", eventType);
+            values.put("comment", newcomment);
             db.insertOrThrow("tracks", null, values);
 
             db.setTransactionSuccessful();
         } catch (Exception e) {
-            Log.d(LOGD_NAME, "Error while trying to delete track from database");
+            Log.d(LOGD_NAME, "Error while trying to update track");
         } finally {
             db.endTransaction();
         }
     }
+
+    public String getTrackCommentOnDate(long eventId, Date dt) {
+        SQLiteDatabase db = this.getReadableDatabase();
+        String Result="";
+        try {
+            DateFormat iso8601Format = new SimpleDateFormat("yyyy-MM-dd");
+            Cursor cursor = db.query("tracks", new String[]{"comment"}, "(eventId = " + String.valueOf(eventId) + ") and (eventDay = DATE('" + iso8601Format.format(dt) + "'))", null, "", "", "");
+
+            if (cursor.moveToFirst()) {
+                do {
+                    Result=cursor.getString(cursor.getColumnIndex("comment"));
+                } while (cursor.moveToNext());
+            }
+            cursor.close();
+
+        } catch (Exception e) {
+            Log.d(LOGD_NAME, "Error while trying to get track comment");
+        }
+
+        return Result;
+    }
+
 }

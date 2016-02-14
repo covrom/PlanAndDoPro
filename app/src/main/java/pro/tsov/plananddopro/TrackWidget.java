@@ -165,21 +165,27 @@ public class TrackWidget extends AppWidgetProvider {
 
     private void makeCurrPlan(Context context, long currentRowId, Date currentDay) {
         PlanDoDBOpenHelper helper = PlanDoDBOpenHelper.getInstance(context);
-        helper.updateTrackEventOnDate(currentRowId, currentDay, 1);
+        TrackRec trc = new TrackRec(currentRowId);
+        helper.readTrackToRec(trc);
+        helper.updateTrackEventOnDate(currentRowId, currentDay, 1, trc.trackcomments.get(currentDay));
         notifyWidgetsDataChanged(context);
         ShowToast(context, R.string.to_planned,currentDay);
     }
 
     private void makeCurrNoExec(Context context, long currentRowId, Date currentDay) {
         PlanDoDBOpenHelper helper = PlanDoDBOpenHelper.getInstance(context);
-        helper.updateTrackEventOnDate(currentRowId, currentDay, 3);
+        TrackRec trc = new TrackRec(currentRowId);
+        helper.readTrackToRec(trc);
+        helper.updateTrackEventOnDate(currentRowId, currentDay, 3, trc.trackcomments.get(currentDay));
         notifyWidgetsDataChanged(context);
         ShowToast(context, R.string.to_cancel,currentDay);
     }
 
     private void makeCurrExec(Context context, long currentRowId, Date currentDay) {
         PlanDoDBOpenHelper helper = PlanDoDBOpenHelper.getInstance(context);
-        helper.updateTrackEventOnDate(currentRowId, currentDay, 2);
+        TrackRec trc = new TrackRec(currentRowId);
+        helper.readTrackToRec(trc);
+        helper.updateTrackEventOnDate(currentRowId, currentDay, 2, trc.trackcomments.get(currentDay));
         notifyWidgetsDataChanged(context);
         ShowToast(context, R.string.to_due,currentDay);
     }

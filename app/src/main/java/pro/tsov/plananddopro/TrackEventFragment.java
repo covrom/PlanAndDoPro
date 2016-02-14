@@ -16,11 +16,14 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.Toolbar;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.text.format.DateFormat;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
@@ -29,7 +32,7 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.Locale;
 
-public class TrackEventFragment extends Fragment implements View.OnClickListener, EventCalendar.EventCalendarListener {
+public class TrackEventFragment extends Fragment implements View.OnClickListener, EventCalendar.EventCalendarListener,TextWatcher {
 
     public long currentRowId;
     public Date currentDay;
@@ -39,11 +42,47 @@ public class TrackEventFragment extends Fragment implements View.OnClickListener
     public static final String PREF_YEAR = "pro.tsov.plananddopro.trackactivityyear";
     private RelativeLayout llLayout;
     private TrackEventFragmentListener listener;
+    PlanDoDBOpenHelper helper;
 
 
     @Override
     public void onEventCalendarChanged() {
-        //refreshFromDB();
+        SimpleDateFormat iso8601Format = new SimpleDateFormat("yyyy-MM-dd");
+
+        EventCalendar rv = (EventCalendar) llLayout.findViewById(R.id.calendar);
+        Date selectedDate = rv.getSelectedDate();
+        EditText edtx = (EditText) llLayout.findViewById(R.id.comment);
+        TextView txondt = (TextView) llLayout.findViewById(R.id.commentOnDate);
+        if (selectedDate != null) {
+            edtx.setText(helper.getTrackCommentOnDate(currentRowId, selectedDate));
+            txondt.setText(iso8601Format.format(selectedDate));
+            edtx.setVisibility(View.VISIBLE);
+            txondt.setVisibility(View.VISIBLE);
+        }
+        else
+        {
+            edtx.setVisibility(View.INVISIBLE);
+            txondt.setVisibility(View.INVISIBLE);
+        }
+    }
+
+    @Override
+    public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+
+    }
+
+    @Override
+    public void onTextChanged(CharSequence s, int start, int before, int count) {
+        EventCalendar rv = (EventCalendar) llLayout.findViewById(R.id.calendar);
+        Date onDate = rv.getSelectedDate();
+        TrackRec trc = new TrackRec(currentRowId);
+        helper.readTrackToRec(trc);
+        helper.updateTrackEventOnDate(currentRowId, onDate, trc.trackdates.get(onDate), s.toString());
+    }
+
+    @Override
+    public void afterTextChanged(Editable s) {
+
     }
 
     public interface TrackEventFragmentListener {
@@ -66,6 +105,7 @@ public class TrackEventFragment extends Fragment implements View.OnClickListener
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         currentDay = Calendar.getInstance().getTime();
+        helper = PlanDoDBOpenHelper.getInstance(super.getActivity());
     }
 
     @Nullable
@@ -76,6 +116,10 @@ public class TrackEventFragment extends Fragment implements View.OnClickListener
 
 //        setRetainInstance(true);
 
+        llLayout = (RelativeLayout) inflater.inflate(R.layout.track_event, container, false);
+        SharedPreferences sp = PreferenceManager.getDefaultSharedPreferences(super.getActivity());
+        sp.edit().remove(PREF_MONTH).remove(PREF_YEAR).apply();
+
         currentRowId = -1;
         if (savedInstanceState!=null){
             currentRowId = savedInstanceState.getLong(PREF_ROWID);
@@ -85,8 +129,6 @@ public class TrackEventFragment extends Fragment implements View.OnClickListener
         }
 
         FragmentActivity faActivity = (FragmentActivity) super.getActivity();
-
-        llLayout = (RelativeLayout) inflater.inflate(R.layout.track_event, container, false);
 
         Toolbar toolbar = (Toolbar) llLayout.findViewById(R.id.main_toolbar);
         toolbar.setTitle("");
@@ -119,6 +161,9 @@ public class TrackEventFragment extends Fragment implements View.OnClickListener
         btnTitl.setText(new SimpleDateFormat("MMMM yyyy", Locale.getDefault()).format(currentDay));
         btnTitl.setOnClickListener(this);
 
+        EditText edtx = ((EditText) llLayout.findViewById(R.id.comment));
+        edtx.addTextChangedListener(this);
+
         refreshFromDB();
 
         return llLayout;
@@ -133,7 +178,7 @@ public class TrackEventFragment extends Fragment implements View.OnClickListener
     @Override
     public void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
-        outState.putLong(PREF_ROWID,currentRowId);
+        outState.putLong(PREF_ROWID, currentRowId);
     }
 
 
@@ -150,7 +195,7 @@ public class TrackEventFragment extends Fragment implements View.OnClickListener
         TrackRec tr = new TrackRec(currentRowId);
         Intent sendIntent = new Intent();
         sendIntent.setAction(Intent.ACTION_SEND);
-        sendIntent.putExtra(Intent.EXTRA_TEXT, tr.getTabbedText(PlanDoDBOpenHelper.getInstance(super.getActivity())));
+        sendIntent.putExtra(Intent.EXTRA_TEXT, tr.getTabbedText(helper));
         sendIntent.setType("text/plain");
         startActivity(sendIntent);
     }
@@ -175,6 +220,8 @@ public class TrackEventFragment extends Fragment implements View.OnClickListener
         sp.edit()
                 .putInt(PREF_MONTH, cal.get(Calendar.MONTH))
                 .putInt(PREF_YEAR, cal.get(Calendar.YEAR))
+                .putInt(TrackTextView.PREF_SELYEAR, 2000)
+                .putInt(TrackTextView.PREF_SELDAY, 1)
                 .apply();
         refreshFromDB();
     }
@@ -191,6 +238,8 @@ public class TrackEventFragment extends Fragment implements View.OnClickListener
         sp.edit()
                 .putInt(PREF_MONTH, cal.get(Calendar.MONTH))
                 .putInt(PREF_YEAR, cal.get(Calendar.YEAR))
+                .putInt(TrackTextView.PREF_SELYEAR, 2000)
+                .putInt(TrackTextView.PREF_SELDAY, 1)
                 .apply();
         refreshFromDB();
     }
@@ -204,7 +253,7 @@ public class TrackEventFragment extends Fragment implements View.OnClickListener
     public void refreshFromDB(){
         if (currentRowId != -1) {
             //считываем из базы
-            PlanDoDBOpenHelper helper = PlanDoDBOpenHelper.getInstance(super.getActivity());
+
             EventRec rec = helper.getEventData(currentRowId);
             TrackRec trrec = new TrackRec(currentRowId);
             helper.readTrackToRec(trrec);
@@ -215,7 +264,21 @@ public class TrackEventFragment extends Fragment implements View.OnClickListener
                 ((TextView) llLayout.findViewById(R.id.textViewDesc)).setText(rec.describe);
 
                 EventCalendar rv = (EventCalendar) llLayout.findViewById(R.id.calendar);
-                ((TextView) llLayout.findViewById(R.id.comment)).setText(trrec.trackcomments.get(rv.getSelectedDate()));
+
+                Date selectedDate = rv.getSelectedDate();
+
+                SimpleDateFormat iso8601Format = new SimpleDateFormat("yyyy-MM-dd");
+                EditText edtx = ((EditText) llLayout.findViewById(R.id.comment));
+                TextView txondt = (TextView) llLayout.findViewById(R.id.commentOnDate);
+                if (selectedDate!=null){
+                    edtx.setText(trrec.trackcomments.get(selectedDate));
+                    txondt.setText(iso8601Format.format(selectedDate));
+                    edtx.setVisibility(View.VISIBLE);
+                    txondt.setVisibility(View.VISIBLE);
+                }else{
+                    edtx.setVisibility(View.INVISIBLE);
+                    txondt.setVisibility(View.INVISIBLE);
+                }
 
                 if (rec.icon.equals("--")) {
                     ((TextView) llLayout.findViewById(R.id.textViewIcon)).setText("    ");

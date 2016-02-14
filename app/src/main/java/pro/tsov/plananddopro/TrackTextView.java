@@ -244,7 +244,9 @@ public class TrackTextView extends TextView implements View.OnClickListener {
 
     private void makeCurrPlan() {
         PlanDoDBOpenHelper helper = PlanDoDBOpenHelper.getInstance(context);
-        helper.updateTrackEventOnDate(currentRowId, eventDate, 1);
+        TrackRec trc = new TrackRec(currentRowId);
+        helper.readTrackToRec(trc);
+        helper.updateTrackEventOnDate(currentRowId, eventDate, 1,trc.trackcomments.get(eventDate));
 //        eventType = 1;
         sendRefreshWidget();
         ShowToast(context, R.string.to_planned, eventDate);
@@ -254,7 +256,9 @@ public class TrackTextView extends TextView implements View.OnClickListener {
 
     private void makeCurrNoExec() {
         PlanDoDBOpenHelper helper = PlanDoDBOpenHelper.getInstance(context);
-        helper.updateTrackEventOnDate(currentRowId, eventDate, 3);
+        TrackRec trc = new TrackRec(currentRowId);
+        helper.readTrackToRec(trc);
+        helper.updateTrackEventOnDate(currentRowId, eventDate, 3, trc.trackcomments.get(eventDate));
 //        eventType = 3;
         sendRefreshWidget();
         ShowToast(context, R.string.to_cancel, eventDate);
@@ -264,7 +268,9 @@ public class TrackTextView extends TextView implements View.OnClickListener {
 
     private void makeCurrExec() {
         PlanDoDBOpenHelper helper = PlanDoDBOpenHelper.getInstance(context);
-        helper.updateTrackEventOnDate(currentRowId, eventDate, 2);
+        TrackRec trc = new TrackRec(currentRowId);
+        helper.readTrackToRec(trc);
+        helper.updateTrackEventOnDate(currentRowId, eventDate, 2, trc.trackcomments.get(eventDate));
 //        eventType = 2;
         sendRefreshWidget();
         ShowToast(context, R.string.to_due, eventDate);
