@@ -206,11 +206,17 @@ public class TrackEventFragment extends Fragment implements View.OnClickListener
             //считываем из базы
             PlanDoDBOpenHelper helper = PlanDoDBOpenHelper.getInstance(super.getActivity());
             EventRec rec = helper.getEventData(currentRowId);
+            TrackRec trrec = new TrackRec(currentRowId);
+            helper.readTrackToRec(trrec);
             if (rec != null) {
 
                 ////////////////////////////////////////////
                 ((TextView) llLayout.findViewById(R.id.textViewName)).setText(rec.name);
                 ((TextView) llLayout.findViewById(R.id.textViewDesc)).setText(rec.describe);
+
+                EventCalendar rv = (EventCalendar) llLayout.findViewById(R.id.calendar);
+                ((TextView) llLayout.findViewById(R.id.comment)).setText(trrec.trackcomments.get(rv.getSelectedDate()));
+
                 if (rec.icon.equals("--")) {
                     ((TextView) llLayout.findViewById(R.id.textViewIcon)).setText("    ");
                 } else {
