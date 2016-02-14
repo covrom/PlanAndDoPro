@@ -189,15 +189,23 @@ public class TrackTextView extends TextView implements View.OnClickListener {
         int off;
         int rad;
         Paint paint = new Paint();
+        Paint wiredPaint = new Paint();
         paint.setAntiAlias(true);
         paint.setStrokeWidth(TrackFactory.convertDiptoPix(context, 2));
 
-        if (hasComment||isSelected) {
-            paint.setColor(ContextCompat.getColor(context, isSelected ? R.color.commentpointsel : R.color.commentpoint));
+        if (hasComment) {
+            paint.setColor(ContextCompat.getColor(context, R.color.commentpoint));
 
             off = TrackFactory.convertDiptoPix(context,8);
             rad = TrackFactory.convertDiptoPix(context, 3);
             canvas.drawCircle(getWidth()-(int)(off*1.6),off,rad, paint);
+        }
+        if (isSelected){
+            wiredPaint.setColor(ContextCompat.getColor(context, R.color.commentpointsel));
+            wiredPaint.setStyle(Paint.Style.STROKE);
+            wiredPaint.setStrokeWidth(TrackFactory.convertDiptoPix(context, 2));
+            off = TrackFactory.convertDiptoPix(context, 4);
+            canvas.drawRect(off, off, getWidth()-off,getHeight()-off,wiredPaint);
         }
 
         if (eventType==2){
@@ -246,7 +254,7 @@ public class TrackTextView extends TextView implements View.OnClickListener {
         PlanDoDBOpenHelper helper = PlanDoDBOpenHelper.getInstance(context);
         TrackRec trc = new TrackRec(currentRowId);
         helper.readTrackToRec(trc);
-        helper.updateTrackEventOnDate(currentRowId, eventDate, 1,trc.trackcomments.get(eventDate));
+        helper.updateTrackEventOnDate(currentRowId, eventDate, 1,trc.trackcomments.get(EventCalendar.roundDate(eventDate)));
 //        eventType = 1;
         sendRefreshWidget();
         ShowToast(context, R.string.to_planned, eventDate);
@@ -258,7 +266,7 @@ public class TrackTextView extends TextView implements View.OnClickListener {
         PlanDoDBOpenHelper helper = PlanDoDBOpenHelper.getInstance(context);
         TrackRec trc = new TrackRec(currentRowId);
         helper.readTrackToRec(trc);
-        helper.updateTrackEventOnDate(currentRowId, eventDate, 3, trc.trackcomments.get(eventDate));
+        helper.updateTrackEventOnDate(currentRowId, eventDate, 3, trc.trackcomments.get(EventCalendar.roundDate(eventDate)));
 //        eventType = 3;
         sendRefreshWidget();
         ShowToast(context, R.string.to_cancel, eventDate);
@@ -270,7 +278,7 @@ public class TrackTextView extends TextView implements View.OnClickListener {
         PlanDoDBOpenHelper helper = PlanDoDBOpenHelper.getInstance(context);
         TrackRec trc = new TrackRec(currentRowId);
         helper.readTrackToRec(trc);
-        helper.updateTrackEventOnDate(currentRowId, eventDate, 2, trc.trackcomments.get(eventDate));
+        helper.updateTrackEventOnDate(currentRowId, eventDate, 2, trc.trackcomments.get(EventCalendar.roundDate(eventDate)));
 //        eventType = 2;
         sendRefreshWidget();
         ShowToast(context, R.string.to_due, eventDate);
