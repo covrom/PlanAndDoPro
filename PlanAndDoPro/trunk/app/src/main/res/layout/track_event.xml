@@ -163,12 +163,20 @@
                 android:orientation="vertical"
                 android:layout_below="@+id/month_bar" />
 
-            <EditText
-                android:id="@+id/comment"
-                android:layout_width="match_parent"
+            <TextView
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:inputType="textMultiLine"
-                android:hint="@string/commentstr" />
+                android:textAppearance="?android:attr/textAppearanceSmall"
+                android:id="@+id/commentOnDate"
+                android:text="Comment on date" />
+
+            <EditText
+                    android:id="@+id/comment"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:inputType="textMultiLine"
+                    android:hint="@string/commentstr"
+                     />
 
         </LinearLayout>
 
