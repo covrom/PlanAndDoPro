@@ -11,8 +11,8 @@ android {
         applicationId 'pro.tsov.plananddopro'
         minSdkVersion 19
         targetSdkVersion 21
-        versionCode 18
-        versionName '2.7'
+        versionCode 19
+        versionName '2.8'
     }
     buildTypes {
         release {
