@@ -37,7 +37,7 @@ public class TrackRec {
             if (et == 1) ets = "plan";
             if (et == 2) ets = "do";
             if (et == 3) ets = "cancel";
-            String comments = trackcomments.get(dt);
+            String comments = trackcomments.get(EventCalendar.roundDate(dt));
             if (comments==null) comments="";
             Result = Result+ iso8601Format.format(dt)+"\t"+ets+"\t"+comments+"\n\r";
         }

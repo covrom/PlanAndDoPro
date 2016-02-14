@@ -406,15 +406,18 @@ public class PlanDoDBOpenHelper extends SQLiteOpenHelper {
 
     public void delTrackEventOnDate(long eventId, Date dt) {
         SQLiteDatabase db = this.getWritableDatabase();
-        db.beginTransaction();
+//        db.beginTransaction();
         try {
-            DateFormat iso8601Format = new SimpleDateFormat("yyyy-MM-dd");
-            db.delete("tracks", "(eventId = " + String.valueOf(eventId) + ") and (eventDay = DATE('" + iso8601Format.format(dt) + "'))", null);
-            db.setTransactionSuccessful();
+            TrackRec trc = new TrackRec(eventId);
+            readTrackToRec(trc);
+            updateTrackEventOnDate(eventId,dt,0,trc.trackcomments.get(EventCalendar.roundDate(dt)));
+//            DateFormat iso8601Format = new SimpleDateFormat("yyyy-MM-dd");
+//            db.delete("tracks", "(eventId = " + String.valueOf(eventId) + ") and (eventDay = DATE('" + iso8601Format.format(dt) + "'))", null);
+//            db.setTransactionSuccessful();
         } catch (Exception e) {
             Log.d(LOGD_NAME, "Error while trying to delete track from database");
         } finally {
-            db.endTransaction();
+//            db.endTransaction();
         }
     }
 

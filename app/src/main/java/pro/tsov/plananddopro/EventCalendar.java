@@ -149,7 +149,8 @@ public class EventCalendar extends LinearLayout implements TrackTextView.TrackTe
                     atDay.setEnabledState(true);
                     atDay.setLeftConnected(lastIs2);
                     atDay.setRightConnected(nextIs2);
-                    //atDay.setHasComment(true);
+                    String atDayComment = trackrec.trackcomments.get(EventCalendar.roundDate(cal.getTime()));
+                    atDay.setHasComment(!(atDayComment==null||atDayComment.equals("")));
                     atDay.setCurrentRowId(currentRowId);
 
                     if (et[day] == 1) {
@@ -187,7 +188,13 @@ public class EventCalendar extends LinearLayout implements TrackTextView.TrackTe
         Calendar cal = Calendar.getInstance();
         cal.set(Calendar.YEAR,selYear);
         cal.set(Calendar.DAY_OF_YEAR, selDay);
-        cal.set(Calendar.HOUR_OF_DAY,0);
+        return EventCalendar.roundDate(cal.getTime());
+    }
+
+    public static Date roundDate(Date dt){
+        Calendar cal = Calendar.getInstance();
+        cal.setTime(dt);
+        cal.set(Calendar.HOUR_OF_DAY, 0);
         cal.set(Calendar.MINUTE, 0);
         cal.set(Calendar.SECOND, 0);
         cal.set(Calendar.MILLISECOND, 0);

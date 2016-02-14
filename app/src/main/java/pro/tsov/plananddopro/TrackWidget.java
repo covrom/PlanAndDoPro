@@ -167,7 +167,7 @@ public class TrackWidget extends AppWidgetProvider {
         PlanDoDBOpenHelper helper = PlanDoDBOpenHelper.getInstance(context);
         TrackRec trc = new TrackRec(currentRowId);
         helper.readTrackToRec(trc);
-        helper.updateTrackEventOnDate(currentRowId, currentDay, 1, trc.trackcomments.get(currentDay));
+        helper.updateTrackEventOnDate(currentRowId, currentDay, 1, trc.trackcomments.get(EventCalendar.roundDate(currentDay)));
         notifyWidgetsDataChanged(context);
         ShowToast(context, R.string.to_planned,currentDay);
     }
@@ -176,7 +176,7 @@ public class TrackWidget extends AppWidgetProvider {
         PlanDoDBOpenHelper helper = PlanDoDBOpenHelper.getInstance(context);
         TrackRec trc = new TrackRec(currentRowId);
         helper.readTrackToRec(trc);
-        helper.updateTrackEventOnDate(currentRowId, currentDay, 3, trc.trackcomments.get(currentDay));
+        helper.updateTrackEventOnDate(currentRowId, currentDay, 3, trc.trackcomments.get(EventCalendar.roundDate(currentDay)));
         notifyWidgetsDataChanged(context);
         ShowToast(context, R.string.to_cancel,currentDay);
     }
@@ -185,7 +185,7 @@ public class TrackWidget extends AppWidgetProvider {
         PlanDoDBOpenHelper helper = PlanDoDBOpenHelper.getInstance(context);
         TrackRec trc = new TrackRec(currentRowId);
         helper.readTrackToRec(trc);
-        helper.updateTrackEventOnDate(currentRowId, currentDay, 2, trc.trackcomments.get(currentDay));
+        helper.updateTrackEventOnDate(currentRowId, currentDay, 2, trc.trackcomments.get(EventCalendar.roundDate(currentDay)));
         notifyWidgetsDataChanged(context);
         ShowToast(context, R.string.to_due,currentDay);
     }

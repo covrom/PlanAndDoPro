@@ -55,7 +55,7 @@ public class TrackEventFragment extends Fragment implements View.OnClickListener
         TextView txondt = (TextView) llLayout.findViewById(R.id.commentOnDate);
         if (selectedDate != null) {
             edtx.setText(helper.getTrackCommentOnDate(currentRowId, selectedDate));
-            txondt.setText(iso8601Format.format(selectedDate));
+            txondt.setText(iso8601Format.format(selectedDate) + "   " + getString(R.string.commentstr));
             edtx.setVisibility(View.VISIBLE);
             txondt.setVisibility(View.VISIBLE);
         }
@@ -77,7 +77,10 @@ public class TrackEventFragment extends Fragment implements View.OnClickListener
         Date onDate = rv.getSelectedDate();
         TrackRec trc = new TrackRec(currentRowId);
         helper.readTrackToRec(trc);
-        helper.updateTrackEventOnDate(currentRowId, onDate, trc.trackdates.get(onDate), s.toString());
+        int currType;
+        if(trc.trackdates.get(onDate)==null) currType = 0;
+        else currType = trc.trackdates.get(onDate);
+        helper.updateTrackEventOnDate(currentRowId, onDate, currType, s.toString());
     }
 
     @Override
@@ -271,8 +274,8 @@ public class TrackEventFragment extends Fragment implements View.OnClickListener
                 EditText edtx = ((EditText) llLayout.findViewById(R.id.comment));
                 TextView txondt = (TextView) llLayout.findViewById(R.id.commentOnDate);
                 if (selectedDate!=null){
-                    edtx.setText(trrec.trackcomments.get(selectedDate));
-                    txondt.setText(iso8601Format.format(selectedDate));
+                    edtx.setText(trrec.trackcomments.get(EventCalendar.roundDate(selectedDate)));
+                    txondt.setText(iso8601Format.format(selectedDate)+"   "+getString(R.string.commentstr));
                     edtx.setVisibility(View.VISIBLE);
                     txondt.setVisibility(View.VISIBLE);
                 }else{

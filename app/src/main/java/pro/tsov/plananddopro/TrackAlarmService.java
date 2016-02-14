@@ -143,7 +143,7 @@ public class TrackAlarmService extends IntentService {
         PlanDoDBOpenHelper helper = PlanDoDBOpenHelper.getInstance(context);
         TrackRec trc = new TrackRec(currentRowId);
         helper.readTrackToRec(trc);
-        helper.updateTrackEventOnDate(currentRowId, currentDay, 3, trc.trackcomments.get(currentDay));
+        helper.updateTrackEventOnDate(currentRowId, currentDay, 3, trc.trackcomments.get(EventCalendar.roundDate(currentDay)));
         notifyWidgetsDataChanged(context);
     }
 
@@ -151,7 +151,7 @@ public class TrackAlarmService extends IntentService {
         PlanDoDBOpenHelper helper = PlanDoDBOpenHelper.getInstance(context);
         TrackRec trc = new TrackRec(currentRowId);
         helper.readTrackToRec(trc);
-        helper.updateTrackEventOnDate(currentRowId, currentDay, 2, trc.trackcomments.get(currentDay));
+        helper.updateTrackEventOnDate(currentRowId, currentDay, 2, trc.trackcomments.get(EventCalendar.roundDate(currentDay)));
         notifyWidgetsDataChanged(context);
     }
 
