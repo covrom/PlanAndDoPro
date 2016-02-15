@@ -47,15 +47,20 @@ public class TrackEventFragment extends Fragment implements View.OnClickListener
 
     @Override
     public void onEventCalendarChanged() {
+
         SimpleDateFormat iso8601Format = new SimpleDateFormat("yyyy-MM-dd");
+        TrackRec trrec = new TrackRec(currentRowId);
+        helper.readTrackToRec(trrec);
 
         EventCalendar rv = (EventCalendar) llLayout.findViewById(R.id.calendar);
         Date selectedDate = rv.getSelectedDate();
         EditText edtx = (EditText) llLayout.findViewById(R.id.comment);
         TextView txondt = (TextView) llLayout.findViewById(R.id.commentOnDate);
         if (selectedDate != null) {
-            edtx.setText(helper.getTrackCommentOnDate(currentRowId, selectedDate));
-            txondt.setText(iso8601Format.format(selectedDate) + "   " + getString(R.string.commentstr));
+            edtx.setText(trrec.trackcomments.get(EventCalendar.roundDate(selectedDate)));
+            txondt.setText(iso8601Format.format(selectedDate)
+                    + "   " + trrec.getEventTypeName(super.getActivity(), EventCalendar.roundDate(selectedDate))
+                    + "   " + getString(R.string.commentstr)+":");
             edtx.setVisibility(View.VISIBLE);
             txondt.setVisibility(View.VISIBLE);
         }
@@ -266,22 +271,7 @@ public class TrackEventFragment extends Fragment implements View.OnClickListener
                 ((TextView) llLayout.findViewById(R.id.textViewName)).setText(rec.name);
                 ((TextView) llLayout.findViewById(R.id.textViewDesc)).setText(rec.describe);
 
-                EventCalendar rv = (EventCalendar) llLayout.findViewById(R.id.calendar);
-
-                Date selectedDate = rv.getSelectedDate();
-
-                SimpleDateFormat iso8601Format = new SimpleDateFormat("yyyy-MM-dd");
-                EditText edtx = ((EditText) llLayout.findViewById(R.id.comment));
-                TextView txondt = (TextView) llLayout.findViewById(R.id.commentOnDate);
-                if (selectedDate!=null){
-                    edtx.setText(trrec.trackcomments.get(EventCalendar.roundDate(selectedDate)));
-                    txondt.setText(iso8601Format.format(selectedDate)+"   "+getString(R.string.commentstr));
-                    edtx.setVisibility(View.VISIBLE);
-                    txondt.setVisibility(View.VISIBLE);
-                }else{
-                    edtx.setVisibility(View.INVISIBLE);
-                    txondt.setVisibility(View.INVISIBLE);
-                }
+                onEventCalendarChanged();
 
                 if (rec.icon.equals("--")) {
                     ((TextView) llLayout.findViewById(R.id.textViewIcon)).setText("    ");

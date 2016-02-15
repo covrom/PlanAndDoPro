@@ -10,6 +10,6 @@ import android.widget.RemoteViewsService;
 public class TrackService extends RemoteViewsService {
     @Override
     public RemoteViewsFactory onGetViewFactory(Intent intent) {
-        return new TrackFactory(getApplicationContext());
+        return new TrackFactory(getApplicationContext(),intent);
     }
 }

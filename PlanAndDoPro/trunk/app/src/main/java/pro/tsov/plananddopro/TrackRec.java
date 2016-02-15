@@ -4,6 +4,8 @@
 
 package pro.tsov.plananddopro;
 
+import android.content.Context;
+
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -21,6 +23,14 @@ public class TrackRec {
         this.eventId = eventId;
         trackdates = new HashMap<>();
         trackcomments = new HashMap<>();
+    }
+
+    public String getEventTypeName(Context ctx, Date dt){
+        int et = trackdates.get(dt);
+        if (et == 1) return ctx.getString(R.string.to_planned);
+        if (et == 2) return ctx.getString(R.string.to_due);
+        if (et == 3) return ctx.getString(R.string.to_cancel);
+        return "";
     }
 
     public String getTabbedText(PlanDoDBOpenHelper helper){
