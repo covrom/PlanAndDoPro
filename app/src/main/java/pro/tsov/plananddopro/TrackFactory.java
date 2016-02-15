@@ -4,16 +4,19 @@
 
 package pro.tsov.plananddopro;
 
+import android.appwidget.AppWidgetManager;
 import android.content.ContentResolver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.content.res.Configuration;
 import android.content.res.Resources;
 import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.Paint;
 import android.graphics.Typeface;
+import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.v4.content.ContextCompat;
 import android.util.TypedValue;
@@ -29,11 +32,15 @@ public class TrackFactory implements RemoteViewsService.RemoteViewsFactory {
     private Context context;
     private ContentResolver cr;
     private Cursor c;
-    PlanDoDBOpenHelper db;
+    private PlanDoDBOpenHelper db;
+    private int appWidgetId;
 
-    public TrackFactory(Context ctx){
+
+    public TrackFactory(Context ctx, Intent intent){
         this.context = ctx;
         this.cr = ctx.getContentResolver();
+        appWidgetId = intent.getIntExtra(AppWidgetManager.EXTRA_APPWIDGET_ID,
+                AppWidgetManager.INVALID_APPWIDGET_ID);
     }
 
     @Override
@@ -60,6 +67,12 @@ public class TrackFactory implements RemoteViewsService.RemoteViewsFactory {
 
     @Override
     public RemoteViews getViewAt(int position) {
+
+        AppWidgetManager appWidgetManager = AppWidgetManager.getInstance(context);
+        Bundle options = appWidgetManager.getAppWidgetOptions(appWidgetId);
+        int widgetWidthDp = options.getInt(AppWidgetManager.OPTION_APPWIDGET_MIN_WIDTH);
+        if (context.getResources().getConfiguration().orientation == Configuration.ORIENTATION_LANDSCAPE)
+            widgetWidthDp = options.getInt(AppWidgetManager.OPTION_APPWIDGET_MAX_WIDTH);
 
         SharedPreferences sp = PreferenceManager.getDefaultSharedPreferences(context);
         Resources res = context.getResources();
@@ -91,8 +104,11 @@ public class TrackFactory implements RemoteViewsService.RemoteViewsFactory {
         }
 
         int[] et = db.readWeekTrackForWidget(id,cal);
+        String[] cmnts = db.readWeekCommentsForWidget(id, cal);
+
         int beforeEt = db.readBeforeWeekTrackForWidget(id, cal);
         int afterEt = db.readAfterWeekTrackForWidget(id, cal);
+
         boolean lastIs2 = beforeEt==2;
         boolean nextIs2;
 
@@ -130,42 +146,66 @@ public class TrackFactory implements RemoteViewsService.RemoteViewsFactory {
                 }
             }
 
+//            TrackTextView atDay = new TrackTextView(context);
+//            atDay.setEventDate(cal.getTime());
+//            atDay.setEventType(et[day]);
+//            atDay.setEnabledState(true);
+//            atDay.setLeftConnected(lastIs2);
+//            atDay.setRightConnected(nextIs2);
+//            String atDayComment = cmnts[day];
+//            atDay.setHasComment(!(atDayComment == null || atDayComment.equals("")));
+//            atDay.setCurrentRowId(id);
+//            atDay.setWidgetBitmapWidth((widgetWidthDp - 32) / 7);
+//
+//            rv.setImageViewBitmap(cellViewId, atDay.buildForWidget());
+//
+//            if (et[day] == 1) {
+//                lastIs2 = false;
+//            } else if (et[day] == 2) {
+//                lastIs2 = true;
+//            } else if (et[day] == 3) {
+//                lastIs2 = false;
+//            }
+
+            String atDayComment = cmnts[day];
+            boolean hasComment = !(atDayComment == null || atDayComment.equals(""));
+
             //выбираем стиль по статусу дня из курсора
 
             if (et[day]==1){
                 //это был план, тогда меняем его на выполнено, если дата текущая или ранее, или очищаем, если дата в будущем
                 if (inFuture||isToday)
                 {
-                    rv.setInt(cellViewId, "setBackgroundResource", R.drawable.w_back_plan);
+                    rv.setInt(cellViewId, "setBackgroundResource", hasComment? R.drawable.w_back_plan_c:R.drawable.w_back_plan);
                 }
                 else
                 {
-                    rv.setInt(cellViewId, "setBackgroundResource", R.drawable.w_back_skip);
+                    rv.setInt(cellViewId, "setBackgroundResource", hasComment ? R.drawable.w_back_skip_c:R.drawable.w_back_skip);
                 }
                 lastIs2 = false;
             }
             else if (et[day]==2){
 
                 if (lastIs2 && nextIs2)
-                    rv.setInt(cellViewId, "setBackgroundResource", R.drawable.w_back_due);
+                    rv.setInt(cellViewId, "setBackgroundResource", hasComment? R.drawable.w_back_due_c:R.drawable.w_back_due);
                 else if (lastIs2 && !nextIs2)
-                    rv.setInt(cellViewId, "setBackgroundResource", R.drawable.w_back_due_noright);
+                    rv.setInt(cellViewId, "setBackgroundResource", hasComment ? R.drawable.w_back_due_noright_c:R.drawable.w_back_due_noright);
                 else if (!lastIs2 && nextIs2)
-                    rv.setInt(cellViewId, "setBackgroundResource", R.drawable.w_back_due_noleft);
+                    rv.setInt(cellViewId, "setBackgroundResource", hasComment ? R.drawable.w_back_due_noleft_c:R.drawable.w_back_due_noleft);
                 else if (!lastIs2 && !nextIs2)
-                    rv.setInt(cellViewId, "setBackgroundResource", R.drawable.w_back_due_noall);
+                    rv.setInt(cellViewId, "setBackgroundResource", hasComment ? R.drawable.w_back_due_noall_c:R.drawable.w_back_due_noall);
 
                 lastIs2 = true;
             }
             else if (et[day]==3){
-                rv.setInt(cellViewId, "setBackgroundResource", R.drawable.w_back_cancel);
+                rv.setInt(cellViewId, "setBackgroundResource", hasComment ? R.drawable.w_back_cancel_c:R.drawable.w_back_cancel);
                 lastIs2 = false;
             }
             else{
                 if(lastIs2 && nextIs2)
-                    rv.setInt(cellViewId, "setBackgroundResource", R.drawable.w_back_empty_chain);
+                    rv.setInt(cellViewId, "setBackgroundResource", hasComment ? R.drawable.w_back_empty_chain_c:R.drawable.w_back_empty_chain);
                 else
-                    rv.setInt(cellViewId, "setBackgroundResource", R.drawable.w_back_empty);
+                    rv.setInt(cellViewId, "setBackgroundResource", hasComment ? R.drawable.w_back_empty_c:R.drawable.w_back_empty);
             }
 
             rv.setTextViewText(cellViewId, Integer.toString(cal.get(Calendar.DAY_OF_MONTH)));

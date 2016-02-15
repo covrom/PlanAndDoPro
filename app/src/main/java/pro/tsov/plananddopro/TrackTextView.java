@@ -3,13 +3,16 @@ package pro.tsov.plananddopro;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.Paint;
+import android.graphics.Rect;
 import android.graphics.Typeface;
 import android.graphics.drawable.Drawable;
 import android.preference.PreferenceManager;
 import android.support.v4.content.ContextCompat;
 import android.util.AttributeSet;
+import android.util.TypedValue;
 import android.view.Gravity;
 import android.view.View;
 import android.widget.TextView;
@@ -41,6 +44,7 @@ public class TrackTextView extends TextView implements View.OnClickListener {
     public static final String PREF_SELDAY = "pro.tsov.plananddopro.trackactivityselectedmonth";
     public static final String PREF_SELYEAR = "pro.tsov.plananddopro.trackactivityselectedyear";
     private TrackTextViewListener listener;
+    private int widgetBitmapWidth;
 
     public interface TrackTextViewListener{ public void onCalendarElementChanged(TrackTextView trView);}
 
@@ -136,6 +140,10 @@ public class TrackTextView extends TextView implements View.OnClickListener {
         this.currentRowId = currentRowId;
     }
 
+    public void setWidgetBitmapWidth(int widgetBitmapWidth) {
+        this.widgetBitmapWidth = widgetBitmapWidth;
+    }
+
     public void build(){
         SharedPreferences sp = PreferenceManager.getDefaultSharedPreferences(context);
         int selYear = sp.getInt(PREF_SELYEAR, 2000);
@@ -148,7 +156,6 @@ public class TrackTextView extends TextView implements View.OnClickListener {
         if (enabledState) {
             Drawable drawable=null;
             if (eventType==1){
-                //это был план, тогда меняем его на выполнено, если дата текущая или ранее, или очищаем, если дата в будущем
                 if (inFuture||isToday)
                 {
                     drawable = ContextCompat.getDrawable(context, R.drawable.w_back_plan).mutate();
@@ -181,73 +188,148 @@ public class TrackTextView extends TextView implements View.OnClickListener {
         setTextColor(ContextCompat.getColor(context, R.color.foreground_textday_black));
     }
 
-    @Override
-    protected void onDraw(Canvas canvas) {
-        super.onDraw(canvas);
-        if (!enabledState) return;
-
+    public void cnvDraw(Canvas canvas,int width,int height){
         int off;
         int rad;
         Paint paint = new Paint();
         Paint wiredPaint = new Paint();
         paint.setAntiAlias(true);
-        paint.setStrokeWidth(TrackFactory.convertDiptoPix(context, 2));
+//        paint.setSubpixelText(true);
+        paint.setStrokeWidth(convertDiptoPix(context, 2));
 
         if (hasComment) {
             paint.setColor(ContextCompat.getColor(context, R.color.commentpoint));
 
-            off = TrackFactory.convertDiptoPix(context,8);
-            rad = TrackFactory.convertDiptoPix(context, 3);
-            canvas.drawCircle(getWidth()-(int)(off*1.6),off,rad, paint);
+            off = convertDiptoPix(context, 8);
+            rad = convertDiptoPix(context, 3);
+            canvas.drawCircle(width - (int) (off * 1.6), off, rad, paint);
         }
-        if (isSelected){
+        if (isSelected) {
             wiredPaint.setColor(ContextCompat.getColor(context, R.color.commentpointsel));
             wiredPaint.setStyle(Paint.Style.STROKE);
-            wiredPaint.setStrokeWidth(TrackFactory.convertDiptoPix(context, 2));
-            off = TrackFactory.convertDiptoPix(context, 4);
-            canvas.drawRect(off, off, getWidth()-off,getHeight()-off,wiredPaint);
+            wiredPaint.setStrokeWidth(convertDiptoPix(context, 2));
+            off = convertDiptoPix(context, 4);
+            canvas.drawRect(off, off, width - off, height - off, wiredPaint);
         }
 
-        if (eventType==2){
-            off = TrackFactory.convertDiptoPix(context,8);
-            rad = TrackFactory.convertDiptoPix(context, 3);
+        if (eventType == 2) {
+            off = convertDiptoPix(context, 8);
+            rad = convertDiptoPix(context, 3);
             paint.setColor(ContextCompat.getColor(context, R.color.commentpoint));
-            canvas.drawCircle(getWidth() - off, getHeight() / 2, rad, paint);
-            canvas.drawCircle(off, getHeight() / 2, rad, paint);
+            canvas.drawCircle(width - off, height / 2, rad, paint);
+            canvas.drawCircle(off, height / 2, rad, paint);
 
-            rad = TrackFactory.convertDiptoPix(context, 2);
+            rad = convertDiptoPix(context, 2);
             paint.setColor(ContextCompat.getColor(context, R.color.track_due_chain));
-            canvas.drawCircle(getWidth() - off, getHeight() / 2, rad, paint);
-            canvas.drawCircle(off,getHeight()/2,rad, paint);
+            canvas.drawCircle(width - off, height / 2, rad, paint);
+            canvas.drawCircle(off, height / 2, rad, paint);
 
-            if(leftConnected){
+            if (leftConnected) {
                 paint.setColor(ContextCompat.getColor(context, R.color.commentpoint));
-                paint.setStrokeWidth(TrackFactory.convertDiptoPix(context, 2));
-                canvas.drawLine(0, getHeight() / 2, off, getHeight() / 2, paint);
+                paint.setStrokeWidth(convertDiptoPix(context, 2));
+                canvas.drawLine(0, height / 2, off, height / 2, paint);
                 paint.setColor(ContextCompat.getColor(context, R.color.track_due_chain));
-                paint.setStrokeWidth(TrackFactory.convertDiptoPix(context, 1));
-                canvas.drawLine(0, getHeight() / 2, off, getHeight() / 2, paint);
+                paint.setStrokeWidth(convertDiptoPix(context, 1));
+                canvas.drawLine(0, height / 2, off, height / 2, paint);
             }
-            if(rightConnected){
+            if (rightConnected) {
                 paint.setColor(ContextCompat.getColor(context, R.color.commentpoint));
-                paint.setStrokeWidth(TrackFactory.convertDiptoPix(context, 2));
-                canvas.drawLine(getWidth() - off, getHeight() / 2, getWidth(), getHeight() / 2, paint);
+                paint.setStrokeWidth(convertDiptoPix(context, 2));
+                canvas.drawLine(width - off, height / 2, width, height / 2, paint);
                 paint.setColor(ContextCompat.getColor(context, R.color.track_due_chain));
-                paint.setStrokeWidth(TrackFactory.convertDiptoPix(context, 1));
-                canvas.drawLine(getWidth() - off, getHeight() / 2, getWidth(), getHeight() / 2, paint);
+                paint.setStrokeWidth(convertDiptoPix(context, 1));
+                canvas.drawLine(width - off, height / 2, width, height / 2, paint);
             }
 
-        }else if (!(eventType == 1|| eventType == 3)){
-            if(leftConnected&&rightConnected){
+        } else if (!(eventType == 1 || eventType == 3)) {
+            if (leftConnected && rightConnected) {
                 paint.setColor(ContextCompat.getColor(context, R.color.commentpoint));
-                paint.setStrokeWidth(TrackFactory.convertDiptoPix(context, 2));
-                canvas.drawLine(0, getHeight() / 2, getWidth(), getHeight() / 2, paint);
+                paint.setStrokeWidth(convertDiptoPix(context, 2));
+                canvas.drawLine(0, height / 2, width, height / 2, paint);
                 paint.setColor(ContextCompat.getColor(context, R.color.track_due_chain));
-                paint.setStrokeWidth(TrackFactory.convertDiptoPix(context, 1));
-                canvas.drawLine(0, getHeight() / 2, getWidth(), getHeight() / 2, paint);
+                paint.setStrokeWidth(convertDiptoPix(context, 1));
+                canvas.drawLine(0, height / 2, width, height / 2, paint);
             }
         }
+    }
 
+    @Override
+    protected void onDraw(Canvas canvas) {
+        super.onDraw(canvas);
+        if (!enabledState) return;
+        cnvDraw(canvas, canvas.getWidth(), canvas.getHeight());
+    }
+
+    public Bitmap buildForWidget() {
+
+        int width = convertDiptoPix(context, widgetBitmapWidth);
+        int height = convertDiptoPix(context, 30);
+
+        Bitmap myBitmap = Bitmap.createBitmap(width, height, Bitmap.Config.ARGB_8888);
+        Canvas myCanvas = new Canvas(myBitmap);
+
+        Drawable drawable = null;
+        if (eventType == 1) {
+            if (inFuture || isToday) {
+                drawable = ContextCompat.getDrawable(context, R.drawable.w_back_plan).mutate();
+            } else {
+                drawable = ContextCompat.getDrawable(context, R.drawable.w_back_skip).mutate();
+            }
+        } else if (eventType == 2) {
+            if (leftConnected && rightConnected)
+                drawable = ContextCompat.getDrawable(context, R.drawable.w_back_due).mutate();
+            else if (leftConnected && !rightConnected)
+                drawable = ContextCompat.getDrawable(context, R.drawable.w_back_due_noright).mutate();
+            else if (!leftConnected && rightConnected)
+                drawable = ContextCompat.getDrawable(context, R.drawable.w_back_due_noleft).mutate();
+            else if (!leftConnected && !rightConnected)
+                drawable = ContextCompat.getDrawable(context, R.drawable.w_back_due_noall).mutate();
+        } else if (eventType == 3) {
+            drawable = ContextCompat.getDrawable(context, R.drawable.w_back_cancel).mutate();
+        } else {
+                if(leftConnected && rightConnected)
+                    drawable = ContextCompat.getDrawable(context, R.drawable.w_back_empty_chain).mutate();
+                else
+                    drawable = ContextCompat.getDrawable(context, R.drawable.w_back_empty).mutate();
+        }
+        drawable.setBounds(0,0,width,height);
+        drawable.draw(myCanvas);
+
+        float fontSizeSP = 18;
+        int fontSizePX = convertDiptoPix(context, fontSizeSP);
+
+        Paint paint = new Paint();
+        paint.setAntiAlias(true);
+        paint.setSubpixelText(true);
+        paint.setTypeface(Typeface.create("sans-serif-condensed", Typeface.NORMAL));
+        paint.setTextSize(fontSizePX);
+        if (isToday)
+            paint.setColor(ContextCompat.getColor(context, R.color.foreground_today));
+        else
+            paint.setColor(ContextCompat.getColor(context, R.color.foreground_textday));
+
+        String daytxt = Integer.toString(monthDay);
+        Rect bounds = new Rect();
+        paint.getTextBounds(daytxt,0,daytxt.length(),bounds);
+        int textWidth = bounds.width();
+        int textHeight = bounds.height();
+        myCanvas.drawText(daytxt, (width - textWidth) / 2, height - (height - textHeight) / 2, paint);
+
+        int off;
+        int rad;
+        paint = new Paint();
+        paint.setAntiAlias(true);
+        paint.setStrokeWidth(convertDiptoPix(context, 2));
+
+        if (hasComment) {
+            paint.setColor(ContextCompat.getColor(context, R.color.commentpoint));
+
+            off = convertDiptoPix(context, 4);
+            rad = convertDiptoPix(context, 3);
+            myCanvas.drawCircle(width - (int) (off * 1.6), off, rad, paint);
+        }
+
+        return myBitmap;
     }
 
     private void makeCurrPlan() {
@@ -353,4 +435,10 @@ public class TrackTextView extends TextView implements View.OnClickListener {
         }
 
     }
+
+    public static int convertDiptoPix(Context context, float dip) {
+        int value = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, dip, context.getResources().getDisplayMetrics());
+        return value;
+    }
+
 }

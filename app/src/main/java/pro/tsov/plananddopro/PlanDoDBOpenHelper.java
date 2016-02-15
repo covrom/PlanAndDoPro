@@ -260,6 +260,56 @@ public class PlanDoDBOpenHelper extends SQLiteOpenHelper {
         return Result;
     }
 
+    public String[] readWeekCommentsForWidget(long eventId, Calendar cal_to_week_start) {
+
+        DateFormat iso8601Format = new SimpleDateFormat("yyyy-MM-dd");
+        HashMap<String, Integer> hash = new HashMap<>();
+
+        Calendar cal = (Calendar) cal_to_week_start.clone();
+        while (cal.get(Calendar.DAY_OF_WEEK) != Calendar.MONDAY) {
+            cal.add(Calendar.DAY_OF_YEAR, -1);
+        }
+
+        Calendar cal_weekend = (Calendar) cal.clone();
+        int i = 0;
+        while (cal_weekend.get(Calendar.DAY_OF_WEEK) != Calendar.SUNDAY) {
+            hash.put(iso8601Format.format(cal_weekend.getTime()), i);
+            i++;
+            cal_weekend.add(Calendar.DAY_OF_YEAR, 1);
+        }
+        hash.put(iso8601Format.format(cal_weekend.getTime()), i);//седьмой день
+
+        //CalendarDay calWeekendDay = CalendarDay.from(cal_weekend);
+
+        String[] Result = {"", "", "", "", "", "", ""};
+
+        SQLiteDatabase db = this.getReadableDatabase();
+        try {
+
+            //берем неделю
+            String SELECT_QUERY =
+                    "SELECT eventId, eventDay, comment FROM tracks WHERE (eventId="
+                            //+ String.valueOf(eventId) + ") ORDER BY DATE(eventDay) ASC";
+                            + String.valueOf(eventId)
+                            + ") AND (eventDay >= DATE('" + iso8601Format.format(cal.getTime()) + "')) AND (eventDay <= DATE('" + iso8601Format.format(cal_weekend.getTime()) + "')) ORDER BY DATE(eventDay) ASC";
+
+            Cursor cursor = db.rawQuery(SELECT_QUERY, null);
+
+            if (cursor.moveToFirst()) {
+                do {
+                    String curDay = cursor.getString(cursor.getColumnIndex("eventDay"));
+                    Result[hash.get(curDay)] = cursor.getString(cursor.getColumnIndex("comment"));
+                } while (cursor.moveToNext());
+            }
+            cursor.close();
+
+        } catch (Exception e) {
+            Log.d(LOGD_NAME, "Error while trying to read event comments from database");
+        }
+
+        return Result;
+    }
+
     public int readBeforeWeekTrackForWidget(long eventId, Calendar cal_to_week_start) {
 
         DateFormat iso8601Format = new SimpleDateFormat("yyyy-MM-dd");
