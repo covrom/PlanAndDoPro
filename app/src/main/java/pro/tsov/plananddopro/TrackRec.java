@@ -26,6 +26,7 @@ public class TrackRec {
     }
 
     public String getEventTypeName(Context ctx, Date dt){
+        if (trackdates.get(dt)==null) return "";
         int et = trackdates.get(dt);
         if (et == 1) return ctx.getString(R.string.to_planned);
         if (et == 2) return ctx.getString(R.string.to_due);
