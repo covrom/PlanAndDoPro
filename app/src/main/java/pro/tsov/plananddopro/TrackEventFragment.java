@@ -4,6 +4,8 @@
 
 package pro.tsov.plananddopro;
 
+import android.appwidget.AppWidgetManager;
+import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -86,7 +88,16 @@ public class TrackEventFragment extends Fragment implements View.OnClickListener
         if(trc.trackdates.get(onDate)==null) currType = 0;
         else currType = trc.trackdates.get(onDate);
         helper.updateTrackEventOnDate(currentRowId, onDate, currType, s.toString());
+        notifyWidgetsDataChanged(super.getActivity());
     }
+
+    public void notifyWidgetsDataChanged(Context context) {
+        AppWidgetManager appWidgetManager = AppWidgetManager.getInstance(context);
+        ComponentName trWidget = new ComponentName(context, TrackWidget.class);
+        int[] appWidgetIds = appWidgetManager.getAppWidgetIds(trWidget);
+        appWidgetManager.notifyAppWidgetViewDataChanged(appWidgetIds, R.id.widgetListView);
+    }
+
 
     @Override
     public void afterTextChanged(Editable s) {
