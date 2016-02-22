@@ -10,9 +10,10 @@ import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.graphics.BitmapFactory;
-import android.support.v4.content.LocalBroadcastManager;
+import android.preference.PreferenceManager;
 
 import java.text.DateFormat;
 import java.text.ParseException;
@@ -107,6 +108,24 @@ public class TrackAlarmService extends IntentService {
 
                 } while (c.moveToNext());
             }
+
+            //переносим на текущую неделю и обновляем виджет, если переход между неделями был больше 5 мин назад
+            SharedPreferences sp = PreferenceManager.getDefaultSharedPreferences(this);
+            Calendar cal = Calendar.getInstance();
+            long lastdt = cal.getTimeInMillis();
+            long lastprevnext = sp.getLong("lastprevnext",0);
+            if ((lastdt-lastprevnext)>600000){
+                sp.edit()
+                        .putInt("currday", cal.get(Calendar.DAY_OF_YEAR))
+                        .putInt("curryear", cal.get(Calendar.YEAR))
+                        .putLong("lastprevnext", lastdt)
+                        .commit();
+
+                Intent i = new Intent(this, TrackWidget.class);
+                i.setAction(TrackWidget.ACTION_REFRESH);
+                sendBroadcast(i);
+            }
+
         }
         else if(intent.getAction().equalsIgnoreCase(TrackAlarmReceiver.ACTION_SET_TODAY_COMPLETE)){
             DateFormat iso8601Format = new SimpleDateFormat("yyyy-MM-dd");
@@ -159,7 +178,7 @@ public class TrackAlarmService extends IntentService {
         Intent intent = new Intent(context, TrackWidget.class);
         intent.setAction(TrackWidget.ACTION_REFRESH);
         context.sendBroadcast(intent);
-        LocalBroadcastManager.getInstance(context).sendBroadcast(intent);
+//        LocalBroadcastManager.getInstance(context).sendBroadcast(intent);
         TrackAlarmReceiver.sendActionOverAlarm(context,5000,false);
     }
 
