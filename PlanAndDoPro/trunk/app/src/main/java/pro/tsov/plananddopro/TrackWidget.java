@@ -70,6 +70,7 @@ public class TrackWidget extends AppWidgetProvider {
         else if(action.equalsIgnoreCase(ACTION_PREV)){
             SharedPreferences sp = PreferenceManager.getDefaultSharedPreferences(context);
             Calendar cal = Calendar.getInstance();
+            long lastdt = cal.getTimeInMillis();
             int thisYear = sp.getInt("curryear", cal.get(Calendar.YEAR));
             int thisDay = sp.getInt("currday", cal.get(Calendar.DAY_OF_YEAR));
             cal.set(Calendar.YEAR, thisYear);
@@ -79,6 +80,7 @@ public class TrackWidget extends AppWidgetProvider {
             sp.edit()
                     .putInt("currday", cal.get(Calendar.DAY_OF_YEAR))
                     .putInt("curryear", cal.get(Calendar.YEAR))
+                    .putLong("lastprevnext", lastdt)
                     .commit();
 
             redrawWidgets(context);
@@ -87,6 +89,7 @@ public class TrackWidget extends AppWidgetProvider {
         else if(action.equalsIgnoreCase(ACTION_NEXT)){
             SharedPreferences sp = PreferenceManager.getDefaultSharedPreferences(context);
             Calendar cal = Calendar.getInstance();
+            long lastdt = cal.getTimeInMillis();
             int thisYear = sp.getInt("curryear", cal.get(Calendar.YEAR));
             int thisDay = sp.getInt("currday", cal.get(Calendar.DAY_OF_YEAR));
             cal.set(Calendar.YEAR, thisYear);
@@ -96,6 +99,7 @@ public class TrackWidget extends AppWidgetProvider {
             sp.edit()
                     .putInt("currday", cal.get(Calendar.DAY_OF_YEAR))
                     .putInt("curryear", cal.get(Calendar.YEAR))
+                    .putLong("lastprevnext", lastdt)
                     .commit();
 
             redrawWidgets(context);

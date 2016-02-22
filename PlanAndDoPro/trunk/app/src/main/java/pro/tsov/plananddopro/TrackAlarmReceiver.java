@@ -49,7 +49,7 @@ public class TrackAlarmReceiver extends WakefulBroadcastReceiver {
         //Intent intentToFire = new Intent(TrackAlarmReceiver.ACTION_SET_TODAY_ALARMS);
         Intent intentToFire = new Intent(ctx, TrackAlarmReceiver.class);
         intentToFire.setAction(ACTION_SET_TODAY_ALARMS);
-        return PendingIntent.getBroadcast(ctx, 3846551, intentToFire, PendingIntent.FLAG_UPDATE_CURRENT);
+        return PendingIntent.getBroadcast(ctx, 3843581, intentToFire, PendingIntent.FLAG_UPDATE_CURRENT);
     }
 
     //оповещение на запуск сервиса
