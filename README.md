@@ -1,6 +1,7 @@
 # Plan & Do Habits Goals Tasks
 Plan & Do helps you achieve your goals, train habits and track activities
 
+https://play.google.com/store/apps/details?id=pro.tsov.plananddopro
 http://youtu.be/K2LucRRmsos
 
 Easy to train or track your habits, achieve your goals, improve your activities.
